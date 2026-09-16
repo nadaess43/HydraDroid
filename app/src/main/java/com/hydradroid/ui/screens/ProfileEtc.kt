@@ -299,14 +299,24 @@ fun SettingsScreen(onProfile: () -> Unit, onNotifications: () -> Unit, onSignIn:
     var debridEdit by remember(debrid) { mutableStateOf(debrid) }
     var torboxEdit by remember(torbox) { mutableStateOf(torbox) }
     var premiumizeEdit by remember(premiumize) { mutableStateOf(premiumize) }
-    var signedIn by remember { mutableStateOf(TokenStore.isSignedIn(ctx)) }
+    // Keystore читаем в фоне: на главном потоке это фриз при каждом открытии настроек.
+    var signedIn by remember { mutableStateOf(TokenStore.isSignedInFast()) }
+    LaunchedEffect(Unit) {
+        signedIn = try {
+            kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) { TokenStore.isSignedIn(ctx) }
+        } catch (_: Exception) { signedIn }
+    }
     var savedTick by remember { mutableStateOf(false) }
     // Возврат из браузера после входа: обновляем состояние (иначе висит «Войти»).
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val obs = androidx.lifecycle.LifecycleEventObserver { _, e ->
             if (e == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
-                try { signedIn = TokenStore.isSignedIn(ctx) } catch (_: Exception) {}
+                scope.launch {
+                    try {
+                        signedIn = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) { TokenStore.isSignedIn(ctx) }
+                    } catch (_: Exception) {}
+                }
             }
         }
         lifecycleOwner.lifecycle.addObserver(obs)
@@ -499,6 +509,7 @@ private fun DownloadSourcesCard() {
     var sources by remember { mutableStateOf<List<DownloadSourceEntity>>(emptyList()) }
     var name by remember { mutableStateOf("") }
     var url by remember { mutableStateOf("") }
+    var code by remember { mutableStateOf("") }
     var busy by remember { mutableStateOf(false) }
     var note by remember { mutableStateOf<String?>(null) }
     LaunchedEffect(Unit) {
@@ -510,22 +521,28 @@ private fun DownloadSourcesCard() {
     HydraCard {
         Text(s.t("Download sources"), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
         Text(
-            s.t("Enabled sources are used for catalogue search and provide download options. The button below adds a bundled set of popular sources."),
+            s.t("Enabled sources are used for catalogue search and provide download options."),
             color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall
         )
-        HydraButton(if (busy) s.t("Importing…") else s.t("Add bundled sources"), {
+        OutlinedTextField(code, { code = it }, label = { Text(s.t("Access code")) }, singleLine = true, modifier = Modifier.fillMaxWidth())
+        HydraButton(if (busy) "…" else s.t("Unlock"), {
             busy = true; note = null
             scope.launch {
                 try {
-                    val added = com.hydradroid.data.local.BuiltinSources.import(ctx, repo)
-                    note = if (added > 0) s.t("Added: {0}", added) else s.t("Everything already added")
+                    if (code.trim() == com.hydradroid.data.local.BuiltinSources.UNLOCK_CODE) {
+                        val added = com.hydradroid.data.local.BuiltinSources.import(ctx, repo)
+                        note = if (added > 0) s.t("Added: {0}", added) else s.t("Everything already added")
+                        code = ""
+                    } else {
+                        note = s.t("Wrong code")
+                    }
                 } catch (e: Exception) {
                     note = s.t("Error: {0}", e.message?.take(120))
                 }
                 reload()
                 busy = false
             }
-        }, kind = "primary", enabled = !busy, modifier = Modifier.fillMaxWidth())
+        }, kind = "primary", enabled = !busy && code.isNotBlank(), modifier = Modifier.fillMaxWidth())
         if (note != null) Text(note!!, color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall)
         if (sources.isEmpty()) Text(s.t("No sources — add your first one below"), color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodyMedium)
         sources.forEach { src ->

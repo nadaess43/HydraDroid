@@ -47,7 +47,8 @@ data class DownloadEntity(
     @PrimaryKey val id: String, // repack id
     val objectId: String, val shop: String, val title: String,
     val fileSize: String? = null, val sourceName: String,
-    val uri: String, // magnet / .torrent-URL / прямая HTTP-ссылка
+    val uri: String, // magnet / .torrent-URL / прямая HTTP-ссылка (оригинал, резолв не храним — ссылки протухают)
+    val downloader: String = "auto", // auto|torrent|direct|gofile|pixeldrain|mediafire|fuckingfast|rootz|datanodes|vikingfile|archiveorg|rd|tb|pm|rd_remote|tb_remote|pm_remote
     val status: String = "queued",
     val progress: Float = 0f,
     val kind: String = "INFO",
@@ -127,7 +128,7 @@ interface LibraryDao {
 
 @Database(
     entities = [LibraryGameEntity::class, CollectionEntity::class, CollectionGameCrossRef::class, AssetsCacheEntity::class, DownloadEntity::class, DownloadSourceEntity::class],
-    version = 4, exportSchema = false
+    version = 5, exportSchema = false
 )
 abstract class HydraDatabase : RoomDatabase() {
     abstract fun libraryDao(): LibraryDao

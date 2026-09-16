@@ -31,17 +31,17 @@ public final class HydraDatabase_Impl extends HydraDatabase {
   @Override
   @NonNull
   protected SupportSQLiteOpenHelper createOpenHelper(@NonNull final DatabaseConfiguration config) {
-    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(4) {
+    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(5) {
       @Override
       public void createAllTables(@NonNull final SupportSQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS `library_games` (`key` TEXT NOT NULL, `objectId` TEXT NOT NULL, `shop` TEXT NOT NULL, `title` TEXT NOT NULL, `coverUrl` TEXT, `iconUrl` TEXT, `heroUrl` TEXT, `logoUrl` TEXT, `playTimeMs` INTEGER NOT NULL, `lastPlayed` INTEGER, `favorite` INTEGER NOT NULL, `pinned` INTEGER NOT NULL, `addedAt` INTEGER NOT NULL, `localPath` TEXT, PRIMARY KEY(`key`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `collections` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY(`id`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `collection_games` (`gameKey` TEXT NOT NULL, `collectionId` TEXT NOT NULL, PRIMARY KEY(`gameKey`, `collectionId`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `assets_cache` (`key` TEXT NOT NULL, `json` TEXT NOT NULL, `cachedAt` INTEGER NOT NULL, PRIMARY KEY(`key`))");
-        db.execSQL("CREATE TABLE IF NOT EXISTS `download_queue` (`id` TEXT NOT NULL, `objectId` TEXT NOT NULL, `shop` TEXT NOT NULL, `title` TEXT NOT NULL, `fileSize` TEXT, `sourceName` TEXT NOT NULL, `uri` TEXT NOT NULL, `status` TEXT NOT NULL, `progress` REAL NOT NULL, `kind` TEXT NOT NULL, `magnet` TEXT, `torrentFilePath` TEXT, `saveDir` TEXT, `fileName` TEXT, `totalBytes` INTEGER NOT NULL, `doneBytes` INTEGER NOT NULL, `uploadBytes` INTEGER NOT NULL, `downSpeed` INTEGER NOT NULL, `upSpeed` INTEGER NOT NULL, `etaSec` INTEGER NOT NULL, `peers` INTEGER NOT NULL, `seeds` INTEGER NOT NULL, `infoHash` TEXT, `error` TEXT, `queuedAt` INTEGER NOT NULL, PRIMARY KEY(`id`))");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `download_queue` (`id` TEXT NOT NULL, `objectId` TEXT NOT NULL, `shop` TEXT NOT NULL, `title` TEXT NOT NULL, `fileSize` TEXT, `sourceName` TEXT NOT NULL, `uri` TEXT NOT NULL, `downloader` TEXT NOT NULL, `status` TEXT NOT NULL, `progress` REAL NOT NULL, `kind` TEXT NOT NULL, `magnet` TEXT, `torrentFilePath` TEXT, `saveDir` TEXT, `fileName` TEXT, `totalBytes` INTEGER NOT NULL, `doneBytes` INTEGER NOT NULL, `uploadBytes` INTEGER NOT NULL, `downSpeed` INTEGER NOT NULL, `upSpeed` INTEGER NOT NULL, `etaSec` INTEGER NOT NULL, `peers` INTEGER NOT NULL, `seeds` INTEGER NOT NULL, `infoHash` TEXT, `error` TEXT, `queuedAt` INTEGER NOT NULL, PRIMARY KEY(`id`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `download_sources` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `url` TEXT NOT NULL, `fingerprint` TEXT, `enabled` INTEGER NOT NULL, PRIMARY KEY(`id`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2ac0b03df36e2d1a69e01ae4620d161d')");
+        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'aa7c56c72a75dce77e8a8ff4c806d0d9')");
       }
 
       @Override
@@ -156,7 +156,7 @@ public final class HydraDatabase_Impl extends HydraDatabase {
                   + " Expected:\n" + _infoAssetsCache + "\n"
                   + " Found:\n" + _existingAssetsCache);
         }
-        final HashMap<String, TableInfo.Column> _columnsDownloadQueue = new HashMap<String, TableInfo.Column>(25);
+        final HashMap<String, TableInfo.Column> _columnsDownloadQueue = new HashMap<String, TableInfo.Column>(26);
         _columnsDownloadQueue.put("id", new TableInfo.Column("id", "TEXT", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsDownloadQueue.put("objectId", new TableInfo.Column("objectId", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsDownloadQueue.put("shop", new TableInfo.Column("shop", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
@@ -164,6 +164,7 @@ public final class HydraDatabase_Impl extends HydraDatabase {
         _columnsDownloadQueue.put("fileSize", new TableInfo.Column("fileSize", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsDownloadQueue.put("sourceName", new TableInfo.Column("sourceName", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsDownloadQueue.put("uri", new TableInfo.Column("uri", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsDownloadQueue.put("downloader", new TableInfo.Column("downloader", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsDownloadQueue.put("status", new TableInfo.Column("status", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsDownloadQueue.put("progress", new TableInfo.Column("progress", "REAL", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsDownloadQueue.put("kind", new TableInfo.Column("kind", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
@@ -208,7 +209,7 @@ public final class HydraDatabase_Impl extends HydraDatabase {
         }
         return new RoomOpenHelper.ValidationResult(true, null);
       }
-    }, "2ac0b03df36e2d1a69e01ae4620d161d", "a19d0b0f740c34bd63067b2b77dcfd07");
+    }, "aa7c56c72a75dce77e8a8ff4c806d0d9", "013787f6efd37e9976b7b792f05ba918");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(config.context).name(config.name).callback(_openCallback).build();
     final SupportSQLiteOpenHelper _helper = config.sqliteOpenHelperFactory.create(_sqliteConfig);
     return _helper;

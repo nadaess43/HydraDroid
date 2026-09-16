@@ -32,5 +32,11 @@ val trDialog = mapOf(
     "Files will appear after the download completes" to "Файлы появятся после завершения загрузки",
     " · archive" to " · архив",
     "Open" to "Открыть",
-    "Failed to open file" to "Не удалось открыть файл"
+    "Failed to open file" to "Не удалось открыть файл",
+    "Service" to "Сервис",
+    "Direct link" to "Прямая ссылка",
+    "Via {0}" to "Через {0}",
+    "Resolve via {0} to a direct link." to "Получить прямую ссылку через {0}.",
+    "Remote download via {0}: no seeding needed." to "Удалённая загрузка через {0}: сидирование не нужно.",
+    "Unrestrict via {0} only." to "Расшифровка только через {0}."
 )

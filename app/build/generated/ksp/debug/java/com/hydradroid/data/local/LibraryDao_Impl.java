@@ -336,7 +336,7 @@ public final class LibraryDao_Impl implements LibraryDao {
       @Override
       @NonNull
       protected String createQuery() {
-        return "INSERT INTO `download_queue` (`id`,`objectId`,`shop`,`title`,`fileSize`,`sourceName`,`uri`,`status`,`progress`,`kind`,`magnet`,`torrentFilePath`,`saveDir`,`fileName`,`totalBytes`,`doneBytes`,`uploadBytes`,`downSpeed`,`upSpeed`,`etaSec`,`peers`,`seeds`,`infoHash`,`error`,`queuedAt`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        return "INSERT INTO `download_queue` (`id`,`objectId`,`shop`,`title`,`fileSize`,`sourceName`,`uri`,`downloader`,`status`,`progress`,`kind`,`magnet`,`torrentFilePath`,`saveDir`,`fileName`,`totalBytes`,`doneBytes`,`uploadBytes`,`downSpeed`,`upSpeed`,`etaSec`,`peers`,`seeds`,`infoHash`,`error`,`queuedAt`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
       }
 
       @Override
@@ -353,54 +353,55 @@ public final class LibraryDao_Impl implements LibraryDao {
         }
         statement.bindString(6, entity.getSourceName());
         statement.bindString(7, entity.getUri());
-        statement.bindString(8, entity.getStatus());
-        statement.bindDouble(9, entity.getProgress());
-        statement.bindString(10, entity.getKind());
+        statement.bindString(8, entity.getDownloader());
+        statement.bindString(9, entity.getStatus());
+        statement.bindDouble(10, entity.getProgress());
+        statement.bindString(11, entity.getKind());
         if (entity.getMagnet() == null) {
-          statement.bindNull(11);
-        } else {
-          statement.bindString(11, entity.getMagnet());
-        }
-        if (entity.getTorrentFilePath() == null) {
           statement.bindNull(12);
         } else {
-          statement.bindString(12, entity.getTorrentFilePath());
+          statement.bindString(12, entity.getMagnet());
         }
-        if (entity.getSaveDir() == null) {
+        if (entity.getTorrentFilePath() == null) {
           statement.bindNull(13);
         } else {
-          statement.bindString(13, entity.getSaveDir());
+          statement.bindString(13, entity.getTorrentFilePath());
         }
-        if (entity.getFileName() == null) {
+        if (entity.getSaveDir() == null) {
           statement.bindNull(14);
         } else {
-          statement.bindString(14, entity.getFileName());
+          statement.bindString(14, entity.getSaveDir());
         }
-        statement.bindLong(15, entity.getTotalBytes());
-        statement.bindLong(16, entity.getDoneBytes());
-        statement.bindLong(17, entity.getUploadBytes());
-        statement.bindLong(18, entity.getDownSpeed());
-        statement.bindLong(19, entity.getUpSpeed());
-        statement.bindLong(20, entity.getEtaSec());
-        statement.bindLong(21, entity.getPeers());
-        statement.bindLong(22, entity.getSeeds());
-        if (entity.getInfoHash() == null) {
-          statement.bindNull(23);
+        if (entity.getFileName() == null) {
+          statement.bindNull(15);
         } else {
-          statement.bindString(23, entity.getInfoHash());
+          statement.bindString(15, entity.getFileName());
         }
-        if (entity.getError() == null) {
+        statement.bindLong(16, entity.getTotalBytes());
+        statement.bindLong(17, entity.getDoneBytes());
+        statement.bindLong(18, entity.getUploadBytes());
+        statement.bindLong(19, entity.getDownSpeed());
+        statement.bindLong(20, entity.getUpSpeed());
+        statement.bindLong(21, entity.getEtaSec());
+        statement.bindLong(22, entity.getPeers());
+        statement.bindLong(23, entity.getSeeds());
+        if (entity.getInfoHash() == null) {
           statement.bindNull(24);
         } else {
-          statement.bindString(24, entity.getError());
+          statement.bindString(24, entity.getInfoHash());
         }
-        statement.bindLong(25, entity.getQueuedAt());
+        if (entity.getError() == null) {
+          statement.bindNull(25);
+        } else {
+          statement.bindString(25, entity.getError());
+        }
+        statement.bindLong(26, entity.getQueuedAt());
       }
     }, new EntityDeletionOrUpdateAdapter<DownloadEntity>(__db) {
       @Override
       @NonNull
       protected String createQuery() {
-        return "UPDATE `download_queue` SET `id` = ?,`objectId` = ?,`shop` = ?,`title` = ?,`fileSize` = ?,`sourceName` = ?,`uri` = ?,`status` = ?,`progress` = ?,`kind` = ?,`magnet` = ?,`torrentFilePath` = ?,`saveDir` = ?,`fileName` = ?,`totalBytes` = ?,`doneBytes` = ?,`uploadBytes` = ?,`downSpeed` = ?,`upSpeed` = ?,`etaSec` = ?,`peers` = ?,`seeds` = ?,`infoHash` = ?,`error` = ?,`queuedAt` = ? WHERE `id` = ?";
+        return "UPDATE `download_queue` SET `id` = ?,`objectId` = ?,`shop` = ?,`title` = ?,`fileSize` = ?,`sourceName` = ?,`uri` = ?,`downloader` = ?,`status` = ?,`progress` = ?,`kind` = ?,`magnet` = ?,`torrentFilePath` = ?,`saveDir` = ?,`fileName` = ?,`totalBytes` = ?,`doneBytes` = ?,`uploadBytes` = ?,`downSpeed` = ?,`upSpeed` = ?,`etaSec` = ?,`peers` = ?,`seeds` = ?,`infoHash` = ?,`error` = ?,`queuedAt` = ? WHERE `id` = ?";
       }
 
       @Override
@@ -417,49 +418,50 @@ public final class LibraryDao_Impl implements LibraryDao {
         }
         statement.bindString(6, entity.getSourceName());
         statement.bindString(7, entity.getUri());
-        statement.bindString(8, entity.getStatus());
-        statement.bindDouble(9, entity.getProgress());
-        statement.bindString(10, entity.getKind());
+        statement.bindString(8, entity.getDownloader());
+        statement.bindString(9, entity.getStatus());
+        statement.bindDouble(10, entity.getProgress());
+        statement.bindString(11, entity.getKind());
         if (entity.getMagnet() == null) {
-          statement.bindNull(11);
-        } else {
-          statement.bindString(11, entity.getMagnet());
-        }
-        if (entity.getTorrentFilePath() == null) {
           statement.bindNull(12);
         } else {
-          statement.bindString(12, entity.getTorrentFilePath());
+          statement.bindString(12, entity.getMagnet());
         }
-        if (entity.getSaveDir() == null) {
+        if (entity.getTorrentFilePath() == null) {
           statement.bindNull(13);
         } else {
-          statement.bindString(13, entity.getSaveDir());
+          statement.bindString(13, entity.getTorrentFilePath());
         }
-        if (entity.getFileName() == null) {
+        if (entity.getSaveDir() == null) {
           statement.bindNull(14);
         } else {
-          statement.bindString(14, entity.getFileName());
+          statement.bindString(14, entity.getSaveDir());
         }
-        statement.bindLong(15, entity.getTotalBytes());
-        statement.bindLong(16, entity.getDoneBytes());
-        statement.bindLong(17, entity.getUploadBytes());
-        statement.bindLong(18, entity.getDownSpeed());
-        statement.bindLong(19, entity.getUpSpeed());
-        statement.bindLong(20, entity.getEtaSec());
-        statement.bindLong(21, entity.getPeers());
-        statement.bindLong(22, entity.getSeeds());
-        if (entity.getInfoHash() == null) {
-          statement.bindNull(23);
+        if (entity.getFileName() == null) {
+          statement.bindNull(15);
         } else {
-          statement.bindString(23, entity.getInfoHash());
+          statement.bindString(15, entity.getFileName());
         }
-        if (entity.getError() == null) {
+        statement.bindLong(16, entity.getTotalBytes());
+        statement.bindLong(17, entity.getDoneBytes());
+        statement.bindLong(18, entity.getUploadBytes());
+        statement.bindLong(19, entity.getDownSpeed());
+        statement.bindLong(20, entity.getUpSpeed());
+        statement.bindLong(21, entity.getEtaSec());
+        statement.bindLong(22, entity.getPeers());
+        statement.bindLong(23, entity.getSeeds());
+        if (entity.getInfoHash() == null) {
           statement.bindNull(24);
         } else {
-          statement.bindString(24, entity.getError());
+          statement.bindString(24, entity.getInfoHash());
         }
-        statement.bindLong(25, entity.getQueuedAt());
-        statement.bindString(26, entity.getId());
+        if (entity.getError() == null) {
+          statement.bindNull(25);
+        } else {
+          statement.bindString(25, entity.getError());
+        }
+        statement.bindLong(26, entity.getQueuedAt());
+        statement.bindString(27, entity.getId());
       }
     });
     this.__upsertionAdapterOfDownloadSourceEntity = new EntityUpsertionAdapter<DownloadSourceEntity>(new EntityInsertionAdapter<DownloadSourceEntity>(__db) {
@@ -1323,6 +1325,7 @@ public final class LibraryDao_Impl implements LibraryDao {
           final int _cursorIndexOfFileSize = CursorUtil.getColumnIndexOrThrow(_cursor, "fileSize");
           final int _cursorIndexOfSourceName = CursorUtil.getColumnIndexOrThrow(_cursor, "sourceName");
           final int _cursorIndexOfUri = CursorUtil.getColumnIndexOrThrow(_cursor, "uri");
+          final int _cursorIndexOfDownloader = CursorUtil.getColumnIndexOrThrow(_cursor, "downloader");
           final int _cursorIndexOfStatus = CursorUtil.getColumnIndexOrThrow(_cursor, "status");
           final int _cursorIndexOfProgress = CursorUtil.getColumnIndexOrThrow(_cursor, "progress");
           final int _cursorIndexOfKind = CursorUtil.getColumnIndexOrThrow(_cursor, "kind");
@@ -1362,6 +1365,8 @@ public final class LibraryDao_Impl implements LibraryDao {
             _tmpSourceName = _cursor.getString(_cursorIndexOfSourceName);
             final String _tmpUri;
             _tmpUri = _cursor.getString(_cursorIndexOfUri);
+            final String _tmpDownloader;
+            _tmpDownloader = _cursor.getString(_cursorIndexOfDownloader);
             final String _tmpStatus;
             _tmpStatus = _cursor.getString(_cursorIndexOfStatus);
             final float _tmpProgress;
@@ -1422,7 +1427,7 @@ public final class LibraryDao_Impl implements LibraryDao {
             }
             final long _tmpQueuedAt;
             _tmpQueuedAt = _cursor.getLong(_cursorIndexOfQueuedAt);
-            _item = new DownloadEntity(_tmpId,_tmpObjectId,_tmpShop,_tmpTitle,_tmpFileSize,_tmpSourceName,_tmpUri,_tmpStatus,_tmpProgress,_tmpKind,_tmpMagnet,_tmpTorrentFilePath,_tmpSaveDir,_tmpFileName,_tmpTotalBytes,_tmpDoneBytes,_tmpUploadBytes,_tmpDownSpeed,_tmpUpSpeed,_tmpEtaSec,_tmpPeers,_tmpSeeds,_tmpInfoHash,_tmpError,_tmpQueuedAt);
+            _item = new DownloadEntity(_tmpId,_tmpObjectId,_tmpShop,_tmpTitle,_tmpFileSize,_tmpSourceName,_tmpUri,_tmpDownloader,_tmpStatus,_tmpProgress,_tmpKind,_tmpMagnet,_tmpTorrentFilePath,_tmpSaveDir,_tmpFileName,_tmpTotalBytes,_tmpDoneBytes,_tmpUploadBytes,_tmpDownSpeed,_tmpUpSpeed,_tmpEtaSec,_tmpPeers,_tmpSeeds,_tmpInfoHash,_tmpError,_tmpQueuedAt);
             _result.add(_item);
           }
           return _result;
@@ -1451,6 +1456,7 @@ public final class LibraryDao_Impl implements LibraryDao {
           final int _cursorIndexOfFileSize = CursorUtil.getColumnIndexOrThrow(_cursor, "fileSize");
           final int _cursorIndexOfSourceName = CursorUtil.getColumnIndexOrThrow(_cursor, "sourceName");
           final int _cursorIndexOfUri = CursorUtil.getColumnIndexOrThrow(_cursor, "uri");
+          final int _cursorIndexOfDownloader = CursorUtil.getColumnIndexOrThrow(_cursor, "downloader");
           final int _cursorIndexOfStatus = CursorUtil.getColumnIndexOrThrow(_cursor, "status");
           final int _cursorIndexOfProgress = CursorUtil.getColumnIndexOrThrow(_cursor, "progress");
           final int _cursorIndexOfKind = CursorUtil.getColumnIndexOrThrow(_cursor, "kind");
@@ -1490,6 +1496,8 @@ public final class LibraryDao_Impl implements LibraryDao {
             _tmpSourceName = _cursor.getString(_cursorIndexOfSourceName);
             final String _tmpUri;
             _tmpUri = _cursor.getString(_cursorIndexOfUri);
+            final String _tmpDownloader;
+            _tmpDownloader = _cursor.getString(_cursorIndexOfDownloader);
             final String _tmpStatus;
             _tmpStatus = _cursor.getString(_cursorIndexOfStatus);
             final float _tmpProgress;
@@ -1550,7 +1558,7 @@ public final class LibraryDao_Impl implements LibraryDao {
             }
             final long _tmpQueuedAt;
             _tmpQueuedAt = _cursor.getLong(_cursorIndexOfQueuedAt);
-            _item = new DownloadEntity(_tmpId,_tmpObjectId,_tmpShop,_tmpTitle,_tmpFileSize,_tmpSourceName,_tmpUri,_tmpStatus,_tmpProgress,_tmpKind,_tmpMagnet,_tmpTorrentFilePath,_tmpSaveDir,_tmpFileName,_tmpTotalBytes,_tmpDoneBytes,_tmpUploadBytes,_tmpDownSpeed,_tmpUpSpeed,_tmpEtaSec,_tmpPeers,_tmpSeeds,_tmpInfoHash,_tmpError,_tmpQueuedAt);
+            _item = new DownloadEntity(_tmpId,_tmpObjectId,_tmpShop,_tmpTitle,_tmpFileSize,_tmpSourceName,_tmpUri,_tmpDownloader,_tmpStatus,_tmpProgress,_tmpKind,_tmpMagnet,_tmpTorrentFilePath,_tmpSaveDir,_tmpFileName,_tmpTotalBytes,_tmpDoneBytes,_tmpUploadBytes,_tmpDownSpeed,_tmpUpSpeed,_tmpEtaSec,_tmpPeers,_tmpSeeds,_tmpInfoHash,_tmpError,_tmpQueuedAt);
             _result.add(_item);
           }
           return _result;
@@ -1587,6 +1595,7 @@ public final class LibraryDao_Impl implements LibraryDao {
           final int _cursorIndexOfFileSize = CursorUtil.getColumnIndexOrThrow(_cursor, "fileSize");
           final int _cursorIndexOfSourceName = CursorUtil.getColumnIndexOrThrow(_cursor, "sourceName");
           final int _cursorIndexOfUri = CursorUtil.getColumnIndexOrThrow(_cursor, "uri");
+          final int _cursorIndexOfDownloader = CursorUtil.getColumnIndexOrThrow(_cursor, "downloader");
           final int _cursorIndexOfStatus = CursorUtil.getColumnIndexOrThrow(_cursor, "status");
           final int _cursorIndexOfProgress = CursorUtil.getColumnIndexOrThrow(_cursor, "progress");
           final int _cursorIndexOfKind = CursorUtil.getColumnIndexOrThrow(_cursor, "kind");
@@ -1625,6 +1634,8 @@ public final class LibraryDao_Impl implements LibraryDao {
             _tmpSourceName = _cursor.getString(_cursorIndexOfSourceName);
             final String _tmpUri;
             _tmpUri = _cursor.getString(_cursorIndexOfUri);
+            final String _tmpDownloader;
+            _tmpDownloader = _cursor.getString(_cursorIndexOfDownloader);
             final String _tmpStatus;
             _tmpStatus = _cursor.getString(_cursorIndexOfStatus);
             final float _tmpProgress;
@@ -1685,7 +1696,7 @@ public final class LibraryDao_Impl implements LibraryDao {
             }
             final long _tmpQueuedAt;
             _tmpQueuedAt = _cursor.getLong(_cursorIndexOfQueuedAt);
-            _result = new DownloadEntity(_tmpId,_tmpObjectId,_tmpShop,_tmpTitle,_tmpFileSize,_tmpSourceName,_tmpUri,_tmpStatus,_tmpProgress,_tmpKind,_tmpMagnet,_tmpTorrentFilePath,_tmpSaveDir,_tmpFileName,_tmpTotalBytes,_tmpDoneBytes,_tmpUploadBytes,_tmpDownSpeed,_tmpUpSpeed,_tmpEtaSec,_tmpPeers,_tmpSeeds,_tmpInfoHash,_tmpError,_tmpQueuedAt);
+            _result = new DownloadEntity(_tmpId,_tmpObjectId,_tmpShop,_tmpTitle,_tmpFileSize,_tmpSourceName,_tmpUri,_tmpDownloader,_tmpStatus,_tmpProgress,_tmpKind,_tmpMagnet,_tmpTorrentFilePath,_tmpSaveDir,_tmpFileName,_tmpTotalBytes,_tmpDoneBytes,_tmpUploadBytes,_tmpDownSpeed,_tmpUpSpeed,_tmpEtaSec,_tmpPeers,_tmpSeeds,_tmpInfoHash,_tmpError,_tmpQueuedAt);
           } else {
             _result = null;
           }

@@ -42,6 +42,20 @@ object TorrentEngine {
         val selected: Boolean
     )
 
+    /** Открытые трекеры из коробки: без них магнит на пустых настройках висит на голом DHT. */
+    val DEFAULT_TRACKERS = listOf(
+        "udp://tracker.opentrackr.org:1337/announce",
+        "udp://open.stealth.si:80/announce",
+        "udp://tracker.torrent.eu.org:451/announce",
+        "udp://explodie.org:6969/announce",
+        "udp://tracker.bittor.pw:6969/announce",
+        "udp://tracker.zer0day.to:1337/announce",
+        "udp://treatiashow.org:1337/announce",
+        "udp://tracker.dler.org:6969/announce",
+        "udp://t.overflow.biz:6969/announce",
+        "http://tracker.opentrackr.org:1337/announce"
+    )
+
     private val session = SessionManager()
     private val exec = Executors.newSingleThreadExecutor()
     @Volatile private var running = false

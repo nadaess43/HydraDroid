@@ -15,6 +15,7 @@ import com.hydradroid.MainActivity
 import com.hydradroid.R
 import com.hydradroid.data.archive.ArchiveExtractor
 import com.hydradroid.data.debrid.Debrid
+import com.hydradroid.data.hosters.Hosters
 import com.hydradroid.data.download.HttpDownloader
 import com.hydradroid.data.local.DownloadEntity
 import com.hydradroid.data.local.DownloadFolder
@@ -143,6 +144,7 @@ class DownloadService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val id = intent?.getStringExtra(EXTRA_ID) ?: return START_STICKY
+        idlePolls = 0 // новая работа — сброс отсчёта тихого стопа
         when (intent.action) {
             ACTION_START -> scope.launch { startTransfer(id) }
             ACTION_PAUSE -> scope.launch { pauseTransfer(id) }
@@ -167,7 +169,9 @@ class DownloadService : Service() {
 
     private suspend fun globalTrackers(): List<String> {
         val raw = applicationContext.prefsData(PrefKeys.GLOBAL_TRACKERS)
-        return raw.lines().map { it.trim() }.filter { it.startsWith("http") || it.startsWith("udp") }
+        val custom = raw.lines().map { it.trim() }.filter { it.startsWith("http") || it.startsWith("udp") }
+        // Пустые настройки = голый DHT и вечное ожидание пиров. Из коробки — открытые трекеры.
+        return if (custom.isNotEmpty()) custom else TorrentEngine.DEFAULT_TRACKERS
     }
 
     private suspend fun startTorrent(d: DownloadEntity) {
@@ -189,6 +193,29 @@ class DownloadService : Service() {
             return
         }
         dao.enqueue(d.copy(status = "fetching", saveDir = saveDir.absolutePath, error = null))
+        // Удалённая закачка магнита через дебрид (как Downloader RealDebrid/TorBox
+        // оригинала): DHT на телефоне часто не находит пиров вообще.
+        val dlKind = d.downloader.ifBlank { "auto" }
+        if (dlKind == Hosters.RD_REMOTE || dlKind == Hosters.TB_REMOTE || dlKind == Hosters.PM_REMOTE) {
+            val magnet = d.magnet?.ifBlank { null } ?: d.uri.takeIf { it.startsWith("magnet:") }
+            if (magnet == null) {
+                dao.enqueue(d.copy(status = "error", error = tx("Magnet link: pick Torrent type", "Magnet-ссылка: выберите тип «Торрент»")))
+                return
+            }
+            val rd = applicationContext.prefsData(PrefKeys.REAL_DEBRID_TOKEN)
+            val tb = applicationContext.prefsData(PrefKeys.TORBOX_TOKEN)
+            val pm = applicationContext.prefsData(PrefKeys.PREMIUMIZE_TOKEN)
+            val link = Debrid.magnetViaOne(dlKind, rd, tb, pm, magnet)
+            if (link == null) {
+                val brand = Hosters.label(dlKind)
+                dao.enqueue(d.copy(status = "error", error = tx("Not cached on {0}: try the torrent instead.", "Нет кэша на {0}: попробуйте торрент.").replace("{0}", brand)))
+                return
+            }
+            val asHttp = d.copy(kind = "HTTP", fileName = link.fileName ?: d.fileName, downloader = "direct")
+            dao.enqueue(asHttp)
+            startHttp(asHttp, link.url)
+            return
+        }
         try {
             val trackers = globalTrackers()
             val hash = if (!d.magnet.isNullOrBlank()) {
@@ -220,7 +247,8 @@ class DownloadService : Service() {
         }
     }
 
-    private suspend fun startHttp(d: DownloadEntity) {
+    /** overrideUrl — уже резолвленная ссылка (дебрид-магнит): в базе храним оригинал. */
+    private suspend fun startHttp(d: DownloadEntity, overrideUrl: String? = null) {
         val dao = db.libraryDao()
         if (httpJobs[d.id]?.isActive == true) return
         // Magnet по HTTP качать бессмысленно — сразу честная ошибка.
@@ -231,16 +259,50 @@ class DownloadService : Service() {
         dao.enqueue(d.copy(status = "downloading", error = null))
         val job = scope.launch {
             try {
-                // unrestrict через заполненные токены, иначе качаем исходную ссылку.
                 val rd = applicationContext.prefsData(PrefKeys.REAL_DEBRID_TOKEN)
                 val tb = applicationContext.prefsData(PrefKeys.TORBOX_TOKEN)
                 val pm = applicationContext.prefsData(PrefKeys.PREMIUMIZE_TOKEN)
-                val direct = if (rd.isNotBlank() || tb.isNotBlank() || pm.isNotBlank()) {
-                    try { Debrid.unrestrictFirst(rd, tb, pm, d.uri) } catch (_: Exception) { null }
+                val dl = d.downloader.ifBlank { "auto" }
+                // 1) Ссылка репака → рабочая ссылка: страницы хостеров резолвим,
+                // иначе качали бы HTML или ловили 404.
+                var base = overrideUrl ?: d.uri
+                var baseName: String? = null
+                var resolved = overrideUrl != null
+                if (!resolved && dl != "direct") {
+                    val hoster = if (dl == "auto") {
+                        Hosters.optionsForUri(d.uri).firstOrNull { it != Hosters.DIRECT }
+                    } else if (dl == "rd" || dl == "tb" || dl == "pm") {
+                        null
+                    } else dl
+                    if (hoster != null) {
+                        val r = try { Hosters.resolve(d.uri, hoster) } catch (_: Exception) { null }
+                        if (r != null) {
+                            base = r.url
+                            baseName = r.fileName
+                            resolved = true
+                        } else if (dl != "auto") {
+                            val err = tx("Could not resolve via {0}.", "Не получилось получить ссылку через {0}.")
+                                .replace("{0}", Hosters.label(hoster))
+                            dao.enqueue(dao.getDownload(d.id)?.copy(status = "error", error = err, downSpeed = 0) ?: d)
+                            return@launch
+                        }
+                    }
+                }
+                // 2) Debrid: уже прямую ссылку не трогаем (лишние 20с и риск сломать).
+                val direct = if (!resolved) {
+                    when (dl) {
+                        "rd", "tb", "pm" -> try {
+                            Debrid.unrestrictOne(dl, rd, tb, pm, base)
+                        } catch (_: Exception) { null }
+                        else -> if (rd.isNotBlank() || tb.isNotBlank() || pm.isNotBlank()) {
+                            try { Debrid.unrestrictFirst(rd, tb, pm, base) } catch (_: Exception) { null }
+                        } else null
+                    }
                 } else null
-                val url = direct?.url ?: d.uri
+                val url = direct?.url ?: base
                 val rawName = d.fileName?.ifBlank { null }
                     ?: direct?.fileName
+                    ?: baseName
                     ?: url.substringAfterLast("/").substringBefore("?").ifBlank { "${d.title}.bin" }
                 val fileName = sanitizeFile(rawName)
                 val cur = dao.getDownload(d.id) ?: d
@@ -477,14 +539,27 @@ class DownloadService : Service() {
             .build()
     }
 
+    /** Счётчик пустых опросов: очередь пуста — уведомлению нечего висеть, гасим сервис. */
+    private var idlePolls = 0
+
     private suspend fun updateStatusNotification() {
         val active = try {
             db.libraryDao().getQueue().filter { it.status == "downloading" || it.status == "fetching" || it.status == "seeding" }
         } catch (_: Exception) { emptyList() }
+        if (active.isEmpty() && httpJobs.isEmpty() && extractJobs.isEmpty()) {
+            idlePolls++
+            if (idlePolls >= 3) {
+                // ~6с тишины: снимаем foreground и останавливаемся, шторка чистая.
+                // Новая команда (cmd) поднимет сервис заново через startForegroundService.
+                try { stopForeground(STOP_FOREGROUND_REMOVE) } catch (_: Exception) {}
+                try { stopSelf() } catch (_: Exception) {}
+            }
+            return
+        }
+        idlePolls = 0
         val down = active.sumOf { it.downSpeed }
         val up = active.sumOf { it.upSpeed }
-        val text = if (active.isEmpty()) tx("Queue is empty", "Очередь пуста")
-        else (if (isRu()) "Активно: " else "Active: ") + "${active.size} · ↓ ${DownloadFolder.formatSpeed(down)} · ↑ ${DownloadFolder.formatSpeed(up)}"
+        val text = (if (isRu()) "Активно: " else "Active: ") + "${active.size} · ↓ ${DownloadFolder.formatSpeed(down)} · ↑ ${DownloadFolder.formatSpeed(up)}"
         notif.notify(FOREGROUND_ID, statusNotification("HydraDroid", text))
     }
 

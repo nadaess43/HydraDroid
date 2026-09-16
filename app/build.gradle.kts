@@ -23,8 +23,13 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // R8 + shrink: меньше dex/recursos → быстрее холодный старт и установка.
+            // Debug остаётся без минификации ради скорости итерации.
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // Тестовые релизные сборки подписываем debug-ключом (CI/sideload).
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -39,19 +44,16 @@ android {
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime)
-    implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.graphics)
-    implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons)
     implementation(libs.compose.material.icons.extended)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
-    implementation(libs.room.paging)
     ksp(libs.room.compiler)
     implementation(libs.retrofit)
     implementation(libs.retrofit.moshi)
@@ -60,9 +62,6 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.coil.compose)
     implementation(libs.datastore)
-    implementation(libs.work.runtime)
-    implementation(libs.paging.runtime)
-    implementation(libs.paging.compose)
     implementation(libs.security.crypto)
     implementation(libs.browser)
     // Торрент-движок: libtorrent через jlibtorrent (порт python-rpc/libtorrent :5881)

@@ -14,6 +14,9 @@ object TokenStore {
     private const val FILE = "hydra_auth"
     private const val FALLBACK = "hydra_auth_plain"
 
+    /** Last known state: lets UI answer instantly without hitting the keystore. */
+    @Volatile private var cachedSignedIn: Boolean? = null
+
     private fun encrypted(ctx: Context): SharedPreferences {
         val masterKey = MasterKey.Builder(ctx, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
             .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
@@ -43,6 +46,7 @@ object TokenStore {
     }
 
     fun saveTokens(ctx: Context, access: String, refresh: String = "") {
+        cachedSignedIn = access.isNotBlank()
         try {
             prefs(ctx).edit().putString("access", access).putString("refresh", refresh).apply()
         } catch (_: Exception) {
@@ -63,10 +67,14 @@ object TokenStore {
     }
 
     fun clear(ctx: Context) {
+        cachedSignedIn = false
         try { prefs(ctx).edit().clear().apply() } catch (_: Exception) {}
         try { plain(ctx).edit().clear().apply() } catch (_: Exception) {}
         try { ctx.deleteSharedPreferences(FILE) } catch (_: Exception) {}
     }
+
+    /** Instant, main-thread-safe: memory first, keystore only if unknown. */
+    fun isSignedInFast(): Boolean = cachedSignedIn ?: false
 
     fun isSignedIn(ctx: Context): Boolean {
         return try { !getAccess(ctx).isNullOrBlank() } catch (_: Exception) { false }

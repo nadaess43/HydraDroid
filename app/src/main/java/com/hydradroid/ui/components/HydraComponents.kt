@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -105,6 +106,33 @@ fun HydraButton(
         ),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
     ) { Text(text, style = MaterialTheme.typography.labelLarge) }
+}
+
+// ── Таб-переключатель для узких рядов (главная: 3 таба в строке):
+// HydraButton 40dp обрезал длинные названия ("Top games of the week" уходило
+// на вторую строку и резалось). Здесь высота 56dp + текст до 2 строк по центру.
+@Composable
+fun HydraTabButton(
+    text: String, selected: Boolean, onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val bg = if (selected) HydraColors.Muted else Color.Transparent
+    val fg = if (selected) HydraColors.OnPrimaryLight else HydraColors.Muted
+    val border = if (selected) null else BorderStroke(1.dp, HydraColors.Border)
+    Button(
+        onClick = onClick, modifier = modifier.height(56.dp),
+        shape = RoundedCornerShape(8.dp), border = border,
+        colors = ButtonDefaults.buttonColors(containerColor = bg, contentColor = fg),
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp)
+    ) {
+        Text(
+            text,
+            style = MaterialTheme.typography.labelMedium.copy(
+                textAlign = TextAlign.Center, lineHeight = 15.sp
+            ),
+            maxLines = 2, overflow = TextOverflow.Ellipsis
+        )
+    }
 }
 
 // ── Порт components/badge: blur-фон rgba(255,255,255,0.1), border 0.2, radius 6, 10–12px ──

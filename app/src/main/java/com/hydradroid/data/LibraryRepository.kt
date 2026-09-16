@@ -80,19 +80,23 @@ class LibraryRepository(private val db: HydraDatabase) {
         )
     }
 
-    /** Полноценный трансфер: kind TORRENT|HTTP, magnet/uri, имя файла. */
+    /** Полноценный трансфер: kind TORRENT|HTTP, magnet/uri, имя файла, выбранный сервис. */
     suspend fun startTransfer(
         shop: String, objectId: String, repack: GameRepack,
-        kind: String, uri: String, fileName: String?
+        kind: String, uri: String, fileName: String?, downloader: String = "auto"
     ) = withContext(Dispatchers.IO) {
         val magnet = uri.takeIf { it.startsWith("magnet:") }
         dao.enqueue(
             DownloadEntity(
                 id = repack.id, objectId = objectId, shop = shop, title = repack.title,
                 fileSize = repack.fileSize, sourceName = repack.downloadSourceName,
-                uri = uri, status = "queued", progress = 0f, kind = kind,
+                uri = uri, downloader = downloader.ifBlank { "auto" },
+                status = "queued", progress = 0f, kind = kind,
                 magnet = magnet,
-                torrentFilePath = if (kind == "TORRENT" && magnet == null && uri.endsWith(".torrent")) uri else null,
+                // torrentFilePath — только ЛОКАЛЬНЫЙ файл. Удалённый .torrent-URL
+                // качает сервис (fetchBytes): раньше сюда писался URL и File().readBytes()
+                // падал — торренты по .torrent-ссылкам не стартовали вообще.
+                torrentFilePath = null,
                 fileName = fileName
             )
         )

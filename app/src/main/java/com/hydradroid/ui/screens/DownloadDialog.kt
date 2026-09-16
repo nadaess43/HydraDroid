@@ -5,7 +5,9 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -25,9 +27,12 @@ import androidx.documentfile.provider.DocumentFile
 import com.hydradroid.HydraDroidApp
 import com.hydradroid.data.LibraryRepository
 import com.hydradroid.data.archive.ArchiveExtractor
+import com.hydradroid.data.hosters.Hosters
 import com.hydradroid.data.local.DownloadEntity
 import com.hydradroid.data.local.DownloadFolder
 import com.hydradroid.data.local.LangStore
+import com.hydradroid.data.local.PrefKeys
+import com.hydradroid.data.local.stringPrefFlow
 import com.hydradroid.data.model.GameRepack
 import com.hydradroid.data.torrent.TorrentEngine
 import com.hydradroid.service.DownloadService
@@ -45,6 +50,35 @@ fun detectKind(uri: String): String = when {
     uri.startsWith("magnet:") -> "TORRENT"
     uri.lowercase().substringBefore("?").endsWith(".torrent") -> "TORRENT"
     else -> "HTTP"
+}
+
+/** Вариант сервиса для ссылки: id + подпись (brand как есть, ключи — через s.t на вызове). */
+data class SvcOpt(val id: String, val title: String, val arg: String? = null)
+
+fun debridBrand(id: String): String = when (id) {
+    "rd", Hosters.RD_REMOTE -> "Real-Debrid"
+    "tb", Hosters.TB_REMOTE -> "TorBox"
+    "pm", Hosters.PM_REMOTE -> "Premiumize"
+    else -> Hosters.label(id)
+}
+
+/** Порт download-settings-modal: доступные даунлоадеры для конкретной ссылки. */
+fun serviceOptions(uri: String, rd: String, tb: String, pm: String): List<SvcOpt> {
+    val opts = Hosters.optionsForUri(uri)
+    if (Hosters.TORRENT in opts) {
+        val l = mutableListOf(SvcOpt(Hosters.TORRENT, Hosters.label(Hosters.TORRENT)))
+        if (rd.isNotBlank()) l += SvcOpt(Hosters.RD_REMOTE, debridBrand(Hosters.RD_REMOTE))
+        if (tb.isNotBlank()) l += SvcOpt(Hosters.TB_REMOTE, debridBrand(Hosters.TB_REMOTE))
+        if (pm.isNotBlank()) l += SvcOpt(Hosters.PM_REMOTE, debridBrand(Hosters.PM_REMOTE))
+        return l
+    }
+    val l = opts.map {
+        if (it == Hosters.DIRECT) SvcOpt(it, "Direct link") else SvcOpt(it, Hosters.label(it))
+    }.toMutableList()
+    if (rd.isNotBlank()) l += SvcOpt("rd", "Via {0}", debridBrand("rd"))
+    if (tb.isNotBlank()) l += SvcOpt("tb", "Via {0}", debridBrand("tb"))
+    if (pm.isNotBlank()) l += SvcOpt("pm", "Via {0}", debridBrand("pm"))
+    return l
 }
 
 // Официальные статусы из ru-локали (downloads).
@@ -125,7 +159,18 @@ fun DownloadDialog(
         (if (all.isNotEmpty()) all.distinct() else listOf(entity.uri)).filter { it.isNotBlank() }
     }
     var chosenUri by remember { mutableStateOf(uris.firstOrNull { it.startsWith("magnet:") } ?: uris.firstOrNull() ?: "") }
-    var kind by remember { mutableStateOf(detectKind(chosenUri)) }
+    val rdTok by stringPrefFlow(ctx, PrefKeys.REAL_DEBRID_TOKEN, "").collectAsState(initial = "")
+    val tbTok by stringPrefFlow(ctx, PrefKeys.TORBOX_TOKEN, "").collectAsState(initial = "")
+    val pmTok by stringPrefFlow(ctx, PrefKeys.PREMIUMIZE_TOKEN, "").collectAsState(initial = "")
+    // Сервис как в оригинале (download-settings-modal): движок выводится из него,
+    // руками TORRENT/HTTP больше не переключаем — это и давало битые связки.
+    val services = remember(chosenUri, rdTok, tbTok, pmTok) {
+        serviceOptions(chosenUri, rdTok, tbTok, pmTok)
+    }
+    var service by remember(chosenUri, services) {
+        mutableStateOf(services.firstOrNull()?.id ?: Hosters.DIRECT)
+    }
+    val kind = if (service == Hosters.TORRENT) "TORRENT" else "HTTP"
     var fileName by remember { mutableStateOf(entity.fileName?.ifBlank { null } ?: chosenUri.substringAfterLast("/").substringBefore("?").ifBlank { "${entity.title}.bin" }) }
     var starting by remember { mutableStateOf(false) }
 
@@ -149,29 +194,41 @@ fun DownloadDialog(
                         uris.forEach { u ->
                             DropdownMenuItem(
                                 text = { Text(u.take(60), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                                onClick = { chosenUri = u; kind = detectKind(u); exp = false }
+                                onClick = { chosenUri = u; exp = false }
                             )
                         }
                     }
                 }
-                // Тип движка (автоопределён, можно переключить вручную)
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    FilterChip(kind == "TORRENT", { kind = "TORRENT" }, { Text(s.t("Torrent")) })
-                    FilterChip(kind == "HTTP", { kind = "HTTP" }, { Text("HTTP") })
+                // Сервис загрузки как в оригинале (выбор даунлоадера под ссылку).
+                Text(s.t("Service"), style = MaterialTheme.typography.bodySmall)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState())
+                ) {
+                    services.forEach { opt ->
+                        val label = if (opt.arg != null) s.t(opt.title, opt.arg)
+                            else if (opt.id == Hosters.DIRECT) s.t("Direct link")
+                            else opt.title
+                        FilterChip(service == opt.id, { service = opt.id }, { Text(label, maxLines = 1) })
+                    }
                 }
-                if (kind == "TORRENT") {
-                    Text(
-                        s.t("Downloads via torrents: with resume and seeding."),
-                        color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall
-                    )
-                } else {
+                val svcHint = when {
+                    service == Hosters.TORRENT -> s.t("Downloads via torrents: with resume and seeding.")
+                    service == Hosters.RD_REMOTE || service == Hosters.TB_REMOTE || service == Hosters.PM_REMOTE ->
+                        s.t("Remote download via {0}: no seeding needed.", debridBrand(service))
+                    service == "rd" || service == "tb" || service == "pm" ->
+                        s.t("Unrestrict via {0} only.", debridBrand(service))
+                    service == Hosters.DIRECT -> s.t("Direct links + Debrid (for configured tokens) with resume.")
+                    else -> s.t("Resolve via {0} to a direct link.", Hosters.label(service))
+                }
+                Text(
+                    svcHint,
+                    color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall
+                )
+                if (kind == "HTTP") {
                     OutlinedTextField(
                         fileName, { fileName = it }, label = { Text(s.t("File name")) },
                         modifier = Modifier.fillMaxWidth(), singleLine = true
-                    )
-                    Text(
-                        s.t("Direct links + Debrid (for configured tokens) with resume."),
-                        color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall
                     )
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -196,7 +253,7 @@ fun DownloadDialog(
                             id = entity.id, title = entity.title, fileSize = entity.fileSize,
                             uris = listOf(chosenUri), downloadSourceId = "", downloadSourceName = entity.sourceName
                         )
-                        repo.startTransfer(entity.shop, entity.objectId, r, kind, chosenUri, fileName.ifBlank { null })
+                        repo.startTransfer(entity.shop, entity.objectId, r, kind, chosenUri, fileName.ifBlank { null }, service)
                         DownloadService.cmd(ctx, DownloadService.ACTION_START, entity.id)
                         onStarted()
                     } catch (_: Exception) {

@@ -163,15 +163,14 @@ fun HomeScreen(
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         // Официальные названия из ru-локали Hydra (без эмодзи — телефон).
                         listOf("hot" to s.t("Trending now"), "weekly" to s.t("Top games of the week"), "achievements" to s.t("Games with achievements")).forEach { (k, label) ->
-                            HydraButton(
-                                label, { tab = k },
-                                kind = if (tab == k) "primary" else "outline",
+                            HydraTabButton(
+                                label, tab == k, { tab = k },
                                 modifier = Modifier.weight(1f)
                             )
                         }
                     }
                     HydraButton(
-                        s.t("Surprise me"),
+                        if (surpriseRolling) s.t("Rolling…") else s.t("Surprise me"),
                         onSurprise,
                         kind = "outline", enabled = !surpriseRolling,
                         modifier = Modifier.fillMaxWidth()

@@ -24,10 +24,14 @@ data class Steam250Game(val title: String, val objectId: String)
 
 object Steam250 {
     private val client = OkHttpClient.Builder()
-        .connectTimeout(20, TimeUnit.SECONDS)
-        .readTimeout(20, TimeUnit.SECONDS)
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(15, TimeUnit.SECONDS)
+        .callTimeout(30, TimeUnit.SECONDS)
         .followRedirects(true)
         .build()
+
+    /** 7 суток: списки меняются медленно, чаще дёргать сеть незачем. */
+    private const val CACHE_TTL_MS = 7 * 24 * 3600 * 1000L
 
     // <a ... data-title="Terraria" ... href="https://club.steam250.com/app/105600" ...>
     private val TagRegex = Regex("<a\\b[^>]*>")
@@ -71,25 +75,40 @@ object Steam250 {
         } catch (_: Exception) { emptyList() }
     }
 
+    private fun readCache(cacheFile: File): List<Steam250Game> {
+        return try {
+            if (!cacheFile.exists()) return emptyList()
+            val arr = JSONArray(cacheFile.readText())
+            (0 until arr.length()).mapNotNull {
+                val o = arr.optJSONObject(it) ?: return@mapNotNull null
+                val id = o.optString("objectId")
+                if (id.isBlank()) null else Steam250Game(o.optString("title"), id)
+            }
+        } catch (_: Exception) { emptyList() }
+    }
+
+    private fun isFresh(cacheFile: File): Boolean =
+        System.currentTimeMillis() - cacheFile.lastModified() < CACHE_TTL_MS
+
+    private fun writeCache(cacheFile: File, list: List<Steam250Game>) {
+        try {
+            val arr = JSONArray()
+            list.forEach { arr.put(JSONObject().put("title", it.title).put("objectId", it.objectId)) }
+            cacheFile.parentFile?.mkdirs()
+            cacheFile.writeText(arr.toString())
+        } catch (_: Exception) {}
+    }
+
     /** Все 4 списка параллельно + дедуп по objectId (как reduce в оригинале). */
     suspend fun fetchList(cacheDir: File? = null): List<Steam250Game> = withContext(Dispatchers.IO) {
-        // Файловый кэш на сутки — не дёргаем 4 страницы при каждом запуске.
         val cacheFile = cacheDir?.let { File(it, "steam250.json") }
-        if (cacheFile != null && cacheFile.exists() &&
-            System.currentTimeMillis() - cacheFile.lastModified() < 24 * 3600 * 1000L
-        ) {
-            try {
-                val arr = JSONArray(cacheFile.readText())
-                val cached = (0 until arr.length()).mapNotNull {
-                    val o = arr.optJSONObject(it) ?: return@mapNotNull null
-                    val id = o.optString("objectId")
-                    if (id.isBlank()) null else Steam250Game(o.optString("title"), id)
-                }
-                if (cached.isNotEmpty()) return@withContext cached
-            } catch (_: Exception) {}
+        // Свежий кэш — сразу отдаём, сеть не трогаем.
+        if (cacheFile != null && cacheFile.exists() && isFresh(cacheFile)) {
+            val cached = readCache(cacheFile)
+            if (cached.isNotEmpty()) return@withContext cached
         }
-        val merged = LinkedHashMap<String, Steam250Game>()
         // Параллельно: 4 страницы грузятся разом, а не друг за другом.
+        val merged = LinkedHashMap<String, Steam250Game>()
         val pages = coroutineScope {
             paths().map { p -> async { fetchPage(p) } }.awaitAll()
         }
@@ -99,15 +118,14 @@ object Steam250 {
             }
         }
         val list = merged.values.toList()
-        if (list.isNotEmpty() && cacheFile != null) {
-            try {
-                val arr = JSONArray()
-                list.forEach { arr.put(JSONObject().put("title", it.title).put("objectId", it.objectId)) }
-                cacheFile.parentFile?.mkdirs()
-                cacheFile.writeText(arr.toString())
-            } catch (_: Exception) {}
+        if (list.isNotEmpty()) {
+            if (cacheFile != null) writeCache(cacheFile, list)
+            return@withContext list
         }
-        list
+        // Сеть отдала пустоту — лучше протухший кэш, чем ничего
+        // (иначе КАЖДОЕ нажатие будет снова ждать сеть).
+        if (cacheFile != null) return@withContext readCache(cacheFile)
+        emptyList()
     }
 }
 
@@ -117,28 +135,44 @@ object RandomGameRoller {
     private var index = 0
     private var warmed = false
 
-    /** Прогрев при старте приложения — первое нажатие мгновенное. */
-    suspend fun warmup(cacheDir: File? = null) = mutex.withLock {
-        if (!warmed) {
+    private fun pickLocked(): Steam250Game? {
+        if (games.isEmpty()) return null
+        index += 1
+        if (index >= games.size) {
+            index = 0
+            games.shuffle()
+        }
+        return games[index % games.size]
+    }
+
+    /** Прогрев при старте: сеть — ВНЕ мьютекса, иначе нажатие ждёт прогрев. */
+    suspend fun warmup(cacheDir: File? = null) {
+        mutex.withLock { if (warmed && games.isNotEmpty()) return }
+        val fresh = Steam250.fetchList(cacheDir)
+        mutex.withLock {
             warmed = true
-            if (games.isEmpty()) {
-                games = Steam250.fetchList(cacheDir).shuffled().toMutableList()
+            if (games.isEmpty() && fresh.isNotEmpty()) {
+                games = fresh.shuffled().toMutableList()
+                index = 0
             }
         }
     }
 
     /** Порт getRandomGame 1:1: шаффл → выдача по кругу → ретасование в конце. */
-    suspend fun next(cacheDir: File? = null): Steam250Game? = mutex.withLock {
-        warmed = true
-        if (games.isEmpty()) {
-            games = Steam250.fetchList(cacheDir).shuffled().toMutableList()
+    suspend fun next(cacheDir: File? = null): Steam250Game? {
+        // Быстрый путь без сети.
+        mutex.withLock {
+            warmed = true
+            pickLocked()?.let { return it }
         }
-        if (games.isEmpty()) return null
-        index += 1
-        if (index == games.size) {
-            index = 0
-            games.shuffle()
+        // Пусто — грузим вне замка (параллельные нажатия не виснут друг на друге).
+        val fresh = Steam250.fetchList(cacheDir)
+        return mutex.withLock {
+            if (games.isEmpty() && fresh.isNotEmpty()) {
+                games = fresh.shuffled().toMutableList()
+                index = 0
+            }
+            pickLocked()
         }
-        games[index % games.size]
     }
 }

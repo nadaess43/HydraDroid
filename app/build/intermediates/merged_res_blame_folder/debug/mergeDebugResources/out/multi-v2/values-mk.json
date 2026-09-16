@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.hydradroid.app-mergeDebugResources-69:/values-mk/values-mk.xml",
+            "outputFile": "com.hydradroid.app-mergeDebugResources-57:/values-mk/values-mk.xml",
             "map": [
                 {
                     "source": "C:\\Users\\kk951\\.gradle\\caches\\transforms-4\\816445fba5ff7d2254477f03eb454b1d\\transformed\\material3-release\\res\\values-mk\\values-mk.xml",

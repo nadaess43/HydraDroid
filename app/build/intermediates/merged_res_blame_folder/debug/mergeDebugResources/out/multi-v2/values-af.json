@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.hydradroid.app-mergeDebugResources-69:/values-af/values-af.xml",
+            "outputFile": "com.hydradroid.app-mergeDebugResources-57:/values-af/values-af.xml",
             "map": [
                 {
                     "source": "C:\\Users\\kk951\\.gradle\\caches\\transforms-4\\5f061abd1e87e8cff4404c4fc6a2458d\\transformed\\browser-1.8.0\\res\\values-af\\values-af.xml",

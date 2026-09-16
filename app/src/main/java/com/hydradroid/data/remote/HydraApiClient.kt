@@ -28,7 +28,13 @@ object HydraApiClient {
 
     private val client = OkHttpClient.Builder()
         .addInterceptor(authInterceptor)
-        .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
+        // Логи тел запросов только в дебаге: в релизе это CPU + IO на каждый вызов.
+        .addInterceptor(
+            HttpLoggingInterceptor().setLevel(
+                if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BASIC
+                else HttpLoggingInterceptor.Level.NONE
+            )
+        )
         .build()
 
     val service: HydraService = Retrofit.Builder()

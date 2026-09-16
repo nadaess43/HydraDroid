@@ -1,30 +1,26 @@
 [
     {
-        "merged": "C:\\Users\\kk951\\.gradle\\daemon\\8.7\\com.hydradroid.app-debug-71:\\drawable_ic_download.xml.flat",
-        "source": "C:\\Users\\kk951\\.gradle\\daemon\\8.7\\com.hydradroid.app-main-73:\\drawable\\ic_download.xml"
+        "merged": "com.hydradroid.app-debug-59:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.hydradroid.app-main-61:/drawable/ic_launcher_foreground.xml"
     },
     {
-        "merged": "C:\\Users\\kk951\\.gradle\\daemon\\8.7\\com.hydradroid.app-debug-71:\\xml_file_paths.xml.flat",
-        "source": "C:\\Users\\kk951\\.gradle\\daemon\\8.7\\com.hydradroid.app-main-73:\\xml\\file_paths.xml"
+        "merged": "com.hydradroid.app-debug-59:/xml_file_paths.xml.flat",
+        "source": "com.hydradroid.app-main-61:/xml/file_paths.xml"
     },
     {
-        "merged": "C:\\Users\\kk951\\.gradle\\daemon\\8.7\\com.hydradroid.app-debug-71:\\drawable_ic_launcher_foreground.xml.flat",
-        "source": "C:\\Users\\kk951\\.gradle\\daemon\\8.7\\com.hydradroid.app-main-73:\\drawable\\ic_launcher_foreground.xml"
+        "merged": "com.hydradroid.app-debug-59:/xml_backup_rules.xml.flat",
+        "source": "com.hydradroid.app-main-61:/xml/backup_rules.xml"
     },
     {
-        "merged": "C:\\Users\\kk951\\.gradle\\daemon\\8.7\\com.hydradroid.app-debug-71:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "C:\\Users\\kk951\\.gradle\\daemon\\8.7\\com.hydradroid.app-main-73:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
+        "merged": "com.hydradroid.app-debug-59:/drawable-nodpi_hydra_logo.png.flat",
+        "source": "com.hydradroid.app-main-61:/drawable-nodpi/hydra_logo.png"
     },
     {
-        "merged": "com.hydradroid.app-debug-71:/xml_backup_rules.xml.flat",
-        "source": "com.hydradroid.app-main-73:/xml/backup_rules.xml"
+        "merged": "com.hydradroid.app-debug-59:/drawable_ic_download.xml.flat",
+        "source": "com.hydradroid.app-main-61:/drawable/ic_download.xml"
     },
     {
-        "merged": "C:\\Users\\kk951\\.gradle\\daemon\\8.7\\com.hydradroid.app-debug-71:\\drawable-nodpi_hydra_logo.png.flat",
-        "source": "C:\\Users\\kk951\\.gradle\\daemon\\8.7\\com.hydradroid.app-main-73:\\drawable-nodpi\\hydra_logo.png"
-    },
-    {
-        "merged": "C:\\Users\\kk951\\.gradle\\daemon\\8.7\\com.hydradroid.app-debug-71:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "C:\\Users\\kk951\\.gradle\\daemon\\8.7\\com.hydradroid.app-main-73:\\mipmap-anydpi-v26\\ic_launcher.xml"
+        "merged": "com.hydradroid.app-debug-59:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.hydradroid.app-main-61:/mipmap-anydpi-v26/ic_launcher.xml"
     }
 ]

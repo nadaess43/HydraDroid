@@ -5,6 +5,7 @@ val trHome = mapOf(
     "Top games of the week" to "Лучшие игры недели",
     "Games with achievements" to "Игры с достижениями",
     "Surprise me" to "Удиви меня",
+    "Rolling…" to "Подбираем…",
     "Show more" to "Показать ещё",
     "That's all" to "Это всё",
     "Retry" to "Повторить",

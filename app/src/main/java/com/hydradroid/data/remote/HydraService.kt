@@ -75,4 +75,11 @@ interface HydraService {
     // Порт addDownloadSource: POST {url} → канонический источник с fingerprint (needsAuth false).
     @POST("/download-sources")
     suspend fun addDownloadSource(@Body body: Map<String, String>): DownloadSource
+
+    // Порт hosters/datanodes + vikingfile unlock (серверный анлок, как download-manager).
+    @POST("/hosters/datanodes/unlock")
+    suspend fun unlockDatanodes(@Body body: Map<String, String>): okhttp3.ResponseBody
+
+    @POST("/hosters/vikingfile/unlock")
+    suspend fun unlockVikingfile(@Body body: Map<String, String>): okhttp3.ResponseBody
 }

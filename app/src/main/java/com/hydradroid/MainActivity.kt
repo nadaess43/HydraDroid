@@ -33,10 +33,13 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.navigation.compose.*
 import com.hydradroid.data.LibraryRepository
+import com.hydradroid.data.local.LangStore
+import com.hydradroid.data.local.languageFlow
 import com.hydradroid.data.local.saveSearchHistory
 import com.hydradroid.data.local.searchHistoryFlow
 import com.hydradroid.data.remote.HydraApiClient
 import com.hydradroid.ui.Routes
+import com.hydradroid.ui.i18n.*
 import com.hydradroid.ui.screens.*
 import com.hydradroid.ui.theme.HydraColors
 import com.hydradroid.ui.theme.HydraTheme
@@ -88,6 +91,7 @@ fun HydraApp() {
     val scope = rememberCoroutineScope()
     var surpriseRolling by remember { mutableStateOf(false) }
     val appCtx = LocalContext.current
+    val lang by languageFlow(appCtx).collectAsState(initial = LangStore.peek(appCtx))
 
     // Прогрев кубика при старте: списки Steam250 грузятся заранее,
     // первое нажатие срабатывает мгновенно.
@@ -136,15 +140,19 @@ fun HydraApp() {
     }
 
     // Порядок и смысл — как sidebar-меню оригинала.
-    val tabs = listOf(
-        Triple(Routes.HOME, "Главная", Icons.Default.Home),
-        Triple(Routes.CATALOGUE, "Каталог", Icons.Default.Apps),
-        Triple(Routes.LIBRARY, "Библиотека", Icons.Default.Book),
-        Triple(Routes.DOWNLOADS, "Загрузки", Icons.Default.Download),
-        Triple(Routes.SETTINGS, "Настройки", Icons.Default.Settings),
-    )
+    // Табы внутри провайдера: ls() в теле HydraApp читал бы дефолт (провайдер
+    // действует только на потомков), поэтому список строится уже под LocalS.
+    CompositionLocalProvider(LocalS provides Str(lang)) {
+        val s = ls()
+        val tabs = listOf(
+            Triple(Routes.HOME, s.t("Home"), Icons.Default.Home),
+            Triple(Routes.CATALOGUE, s.t("Catalogue"), Icons.Default.Apps),
+            Triple(Routes.LIBRARY, s.t("Library"), Icons.Default.Book),
+            Triple(Routes.DOWNLOADS, s.t("Downloads"), Icons.Default.Download),
+            Triple(Routes.SETTINGS, s.t("Settings"), Icons.Default.Settings),
+        )
 
-    Scaffold(
+        Scaffold(
         topBar = {
             // Порт components/header: back + title; поиск — второй строкой на всю ширину
             // (на телефоне 200px в одну строку с заголовком не влезают).
@@ -211,28 +219,31 @@ fun HydraApp() {
             composable(Routes.CATALOGUE) { CatalogueScreen(query = debounced, onQueryChange = { search = it }, onGame = { s, id -> nav.navigate(Routes.game(s, id)) }) }
             composable(Routes.LIBRARY) { LibraryScreen(onGame = { s, id -> nav.navigate(Routes.game(s, id)) }) }
             composable(Routes.DOWNLOADS) { DownloadsScreen() }
-            composable(Routes.SETTINGS) { SettingsScreen(onProfile = { nav.navigate(Routes.profile("me")) }, onNotifications = { nav.navigate(Routes.NOTIFICATIONS) }) }
+            composable(Routes.SETTINGS) { SettingsScreen(onProfile = { nav.navigate(Routes.profile("me")) }, onNotifications = { nav.navigate(Routes.NOTIFICATIONS) }, onSignIn = { nav.navigate(Routes.AUTH_SOON) { launchSingleTop = true } }) }
             composable(Routes.GAME) { e ->
                 GameDetailsScreen(shop = e.arguments?.getString("shop") ?: "steam", objectId = e.arguments?.getString("objectId") ?: "",
                     onAchievements = { s, id -> nav.navigate("achievements?objectId=$id&shop=$s") }, onBack = { nav.popBackStack() },
                     onRollRandom = { rollRandom() })
             }
-            composable(Routes.PROFILE) { ProfileScreen() }
+            composable(Routes.PROFILE) { ProfileScreen(onSignIn = { nav.navigate(Routes.AUTH_SOON) { launchSingleTop = true } }) }
             composable(Routes.ACHIEVEMENTS) { AchievementsScreen() }
             composable(Routes.NOTIFICATIONS) { NotificationsScreen() }
+            composable(Routes.AUTH_SOON) { AuthComingSoonScreen(onBack = { nav.popBackStack() }) }
         }
+    }
     }
 }
 
-private fun headerTitle(route: String): String = when {
-    route.startsWith(Routes.CATALOGUE) -> "Каталог"
-    route.startsWith(Routes.LIBRARY) -> "Библиотека"
-    route.startsWith(Routes.DOWNLOADS) -> "Загрузки"
-    route.startsWith(Routes.SETTINGS) -> "Настройки"
-    route.contains("game/") -> "Игра"
-    route.contains("profile/") -> "Профиль"
-    route.contains("achievements") -> "Достижения"
-    route.contains("notifications") -> "Уведомления"
+private fun headerTitle(route: String, s: Str): String = when {
+    route.startsWith(Routes.CATALOGUE) -> s.t("Catalogue")
+    route.startsWith(Routes.LIBRARY) -> s.t("Library")
+    route.startsWith(Routes.DOWNLOADS) -> s.t("Downloads")
+    route.startsWith(Routes.SETTINGS) -> s.t("Settings")
+    route.contains("game/") -> s.t("Game")
+    route.contains("profile/") -> s.t("Profile")
+    route.contains("achievements") -> s.t("Achievements")
+    route.contains("notifications") -> s.t("Notifications")
+    route == Routes.AUTH_SOON -> s.t("Sign in")
     else -> "Hydra"
 }
 
@@ -250,6 +261,7 @@ private fun HydraHeader(
     onBack: () -> Unit,
     onNotifications: () -> Unit
 ) {
+    val s = ls()
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
     val keyboard = LocalSoftwareKeyboardController.current
@@ -275,18 +287,18 @@ private fun HydraHeader(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (route.contains("game/") || route.contains("profile/") || route.contains("achievements") || route.contains("notifications")) {
+            if (route.contains("game/") || route.contains("profile/") || route.contains("achievements") || route.contains("notifications") || route == Routes.AUTH_SOON) {
                 IconButton(onClick = onBack, modifier = Modifier.size(32.dp)) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "Назад", tint = HydraColors.Body)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, s.t("Back"), tint = HydraColors.Body)
                 }
             }
             Text(
-                headerTitle(route), style = MaterialTheme.typography.headlineSmall,
+                headerTitle(route, s), style = MaterialTheme.typography.headlineSmall,
                 maxLines = 1, overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f)
             )
             IconButton(onClick = onNotifications, modifier = Modifier.size(32.dp)) {
-                Icon(Icons.Default.Notifications, "Уведомления", tint = HydraColors.SecondaryText60, modifier = Modifier.size(20.dp))
+                Icon(Icons.Default.Notifications, s.t("Notifications"), tint = HydraColors.SecondaryText60, modifier = Modifier.size(20.dp))
             }
         }
         Box(Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(bottom = 8.dp)) {
@@ -314,13 +326,13 @@ private fun HydraHeader(
                         keyboardActions = KeyboardActions(onSearch = { keyboard?.hide() }),
                         textStyle = TextStyle(color = HydraColors.TextBright, fontSize = 14.sp),
                         decorationBox = { inner ->
-                            if (search.isEmpty()) Text("Поиск", color = HydraColors.SecondaryText50, fontSize = 14.sp)
+                            if (search.isEmpty()) Text(s.t("Search"), color = HydraColors.SecondaryText50, fontSize = 14.sp)
                             inner()
                         }
                     )
                     if (search.isNotEmpty()) {
                         IconButton(onClick = { onSearchChange(""); searchTick = "" }, modifier = Modifier.size(28.dp)) {
-                            Icon(Icons.Default.Close, "Очистить", tint = HydraColors.SecondaryText50, modifier = Modifier.size(16.dp))
+                            Icon(Icons.Default.Close, s.t("Clear"), tint = HydraColors.SecondaryText50, modifier = Modifier.size(16.dp))
                         }
                     }
                 }
@@ -372,6 +384,7 @@ private fun SuggestionDrop(items: List<Pair<String, String>>, onPick: (String) -
 /** Порт bottom-panel: центр — статус загрузок, справа — версия. Клик ведёт в загрузки. */
 @Composable
 private fun BottomPanelStrip(route: String, onClick: () -> Unit) {
+    val s = ls()
     val ctx = LocalContext.current
     val repo = remember { LibraryRepository((ctx.applicationContext as HydraDroidApp).db) }
     // Реактивно: пересчёт только когда база реально изменилась.
@@ -393,12 +406,12 @@ private fun BottomPanelStrip(route: String, onClick: () -> Unit) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 Box(Modifier.size(8.dp).clip(RoundedCornerShape(4.dp)).background(HydraColors.BrandTeal))
                 Text(
-                    "В очереди: $queueSize",
+                    s.t("In queue: {0}", queueSize),
                     color = HydraColors.Body, fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis
                 )
             }
         } else {
-            Text("Нет активных загрузок", color = HydraColors.SecondaryText60, fontSize = 12.sp)
+            Text(s.t("No active downloads"), color = HydraColors.SecondaryText60, fontSize = 12.sp)
         }
         Text("v${com.hydradroid.BuildConfig.VERSION_NAME}", color = HydraColors.SecondaryText50, fontSize = 12.sp)
     }

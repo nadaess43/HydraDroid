@@ -27,11 +27,14 @@ import com.hydradroid.data.LibraryRepository
 import com.hydradroid.data.archive.ArchiveExtractor
 import com.hydradroid.data.local.DownloadEntity
 import com.hydradroid.data.local.DownloadFolder
+import com.hydradroid.data.local.LangStore
 import com.hydradroid.data.model.GameRepack
 import com.hydradroid.data.torrent.TorrentEngine
 import com.hydradroid.service.DownloadService
 import com.hydradroid.ui.components.HydraButton
 import com.hydradroid.ui.components.HydraEmptyState
+import com.hydradroid.ui.i18n.Str
+import com.hydradroid.ui.i18n.ls
 import com.hydradroid.ui.theme.HydraColors
 import kotlinx.coroutines.launch
 import java.io.File
@@ -45,15 +48,19 @@ fun detectKind(uri: String): String = when {
 }
 
 // Официальные статусы из ru-локали (downloads).
-fun statusLabel(status: String): String = when (status) {
-    "queued" -> "В очереди"
-    "fetching" -> "Загрузка метаданных…"
-    "downloading" -> "Скачивание"
-    "paused" -> "Приостановлено"
-    "seeding" -> "Раздача"
-    "complete" -> "Завершено"
-    "error" -> "Ошибка"
-    else -> status
+@Composable
+fun statusLabel(status: String): String {
+    val s = ls()
+    return when (status) {
+        "queued" -> s.t("Queued")
+        "fetching" -> s.t("Fetching metadata")
+        "downloading" -> s.t("Downloading")
+        "paused" -> s.t("Paused")
+        "seeding" -> s.t("Seeding")
+        "complete" -> s.t("Complete")
+        "error" -> s.t("Error")
+        else -> status
+    }
 }
 
 /** Хоcт SAF-пикера с доступом к Context (пикер + сохранение дерева). */
@@ -108,6 +115,7 @@ fun DownloadDialog(
     onStarted: () -> Unit
 ) {
     val ctx = LocalContext.current
+    val s = ls()
     val repo = remember { LibraryRepository((ctx.applicationContext as HydraDroidApp).db) }
     val scope = rememberCoroutineScope()
     val askNotif = rememberNotifPermission()
@@ -123,13 +131,13 @@ fun DownloadDialog(
 
     AlertDialog(
         onDismissRequest = { if (!starting) onDismiss() },
-        title = { Text("Скачать", maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        title = { Text(s.t("Download"), maxLines = 1, overflow = TextOverflow.Ellipsis) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(entity.title, fontWeight = FontWeight.Bold)
                 Text("${entity.sourceName} · ${entity.fileSize ?: "?"}", color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall)
                 if (uris.size > 1) {
-                    Text("Источник (${uris.size})", style = MaterialTheme.typography.bodySmall)
+                    Text(s.t("Source ({0})", uris.size), style = MaterialTheme.typography.bodySmall)
                     var exp by remember { mutableStateOf(false) }
                     OutlinedButton(onClick = { exp = true }, modifier = Modifier.fillMaxWidth()) {
                         Text(
@@ -148,37 +156,37 @@ fun DownloadDialog(
                 }
                 // Тип движка (автоопределён, можно переключить вручную)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    FilterChip(kind == "TORRENT", { kind = "TORRENT" }, { Text("Торрент") })
+                    FilterChip(kind == "TORRENT", { kind = "TORRENT" }, { Text(s.t("Torrent")) })
                     FilterChip(kind == "HTTP", { kind = "HTTP" }, { Text("HTTP") })
                 }
                 if (kind == "TORRENT") {
                     Text(
-                        "Качается через торренты: с докачкой и раздачей.",
+                        s.t("Downloads via torrents: with resume and seeding."),
                         color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall
                     )
                 } else {
                     OutlinedTextField(
-                        fileName, { fileName = it }, label = { Text("Имя файла") },
+                        fileName, { fileName = it }, label = { Text(s.t("File name")) },
                         modifier = Modifier.fillMaxWidth(), singleLine = true
                     )
                     Text(
-                        "Прямые ссылки + Debrid (по заполненным токенам) с докачкой.",
+                        s.t("Direct links + Debrid (for configured tokens) with resume."),
                         color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall
                     )
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Папка: ", style = MaterialTheme.typography.bodySmall)
+                    Text(s.t("Folder: "), style = MaterialTheme.typography.bodySmall)
                     Text(
                         folderLabel, style = MaterialTheme.typography.bodySmall,
                         color = HydraColors.Body, maxLines = 1, overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f)
                     )
-                    TextButton(onClick = onPickFolder) { Text("Изменить") }
+                    TextButton(onClick = onPickFolder) { Text(s.t("Change")) }
                 }
             }
         },
         confirmButton = {
-            HydraButton(if (starting) "Старт…" else "Скачать", {
+            HydraButton(if (starting) s.t("Starting…") else s.t("Download"), {
                 if (chosenUri.isBlank()) return@HydraButton
                 starting = true
                 askNotif()
@@ -197,13 +205,14 @@ fun DownloadDialog(
                 }
             }, kind = "primary", enabled = !starting && chosenUri.isNotBlank())
         },
-        dismissButton = { TextButton(onClick = onDismiss, enabled = !starting) { Text("Отмена") } }
+        dismissButton = { TextButton(onClick = onDismiss, enabled = !starting) { Text(s.t("Cancel")) } }
     )
 }
 
 /** Выбор файлов торрента (приоритеты): отмеченные качаются, остальные пропускаются. */
 @Composable
 fun TorrentFilesDialog(infoHash: String, onDismiss: () -> Unit) {
+    val s = ls()
     val scope = rememberCoroutineScope()
     var files by remember { mutableStateOf<List<TorrentEngine.TorrentFileEntry>>(emptyList()) }
     var selected by remember { mutableStateOf<Set<Int>>(emptySet()) }
@@ -224,17 +233,17 @@ fun TorrentFilesDialog(infoHash: String, onDismiss: () -> Unit) {
     Dialog(onDismissRequest = onDismiss) {
         Surface(shape = MaterialTheme.shapes.large, color = HydraColors.DarkBackground) {
             Column(Modifier.padding(16.dp).heightIn(max = 480.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Файлы торрента", style = MaterialTheme.typography.headlineSmall)
+                Text(s.t("Torrent files"), style = MaterialTheme.typography.headlineSmall)
                 when {
                     loading -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator(color = HydraColors.SecondaryText60)
                     }
                     files.isEmpty() -> HydraEmptyState(
-                        title = "Пока пусто",
-                        hint = "Файлы появятся, когда начнётся загрузка"
+                        title = s.t("Empty for now"),
+                        hint = s.t("Files will appear once the download starts")
                     )
                     else -> {
-                        Text("Выбрано: ${selected.size} из ${files.size}", color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall)
+                        Text(s.t("Selected: {0} of {1}", selected.size, files.size), color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall)
                         LazyColumn(Modifier.weight(1f, fill = false), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             items(files, key = { it.index }) { f ->
                                 Row(
@@ -260,7 +269,7 @@ fun TorrentFilesDialog(infoHash: String, onDismiss: () -> Unit) {
                                 }
                             }
                         }
-                        HydraButton(if (applying) "Применение…" else "Применить", {
+                        HydraButton(if (applying) s.t("Applying…") else s.t("Apply"), {
                             applying = true
                             scope.launch {
                                 kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
@@ -284,6 +293,7 @@ fun LocalFilesDialog(
     onDismiss: () -> Unit
 ) {
     val ctx = LocalContext.current
+    val s = ls()
     var files by remember { mutableStateOf<List<File>>(emptyList()) }
     LaunchedEffect(dir) {
         files = try {
@@ -293,10 +303,10 @@ fun LocalFilesDialog(
     Dialog(onDismissRequest = onDismiss) {
         Surface(shape = MaterialTheme.shapes.large, color = HydraColors.DarkBackground) {
             Column(Modifier.padding(16.dp).heightIn(max = 480.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text("Файлы", style = MaterialTheme.typography.headlineSmall)
+                Text(s.t("Files"), style = MaterialTheme.typography.headlineSmall)
                 Text(dir.absolutePath, color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 if (files.isEmpty()) {
-                    HydraEmptyState(title = "Папка пуста", hint = "Файлы появятся после завершения загрузки")
+                    HydraEmptyState(title = s.t("Folder is empty"), hint = s.t("Files will appear after the download completes"))
                 } else {
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         items(files, key = { it.absolutePath }) { f ->
@@ -305,7 +315,7 @@ fun LocalFilesDialog(
                                 headlineContent = { Text(f.name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                                 supportingContent = {
                                     Text(
-                                        DownloadFolder.formatBytes(f.length()) + if (isArc) " · архив" else "",
+                                        DownloadFolder.formatBytes(f.length()) + if (isArc) s.t(" · archive") else "",
                                         color = HydraColors.SecondaryText60
                                     )
                                 },
@@ -329,6 +339,8 @@ fun LocalFilesDialog(
 }
 
 fun openFileExternal(ctx: android.content.Context, file: File) {
+    // Вне композиции: язык через синхронное зеркало LangStore (как для уведомлений сервиса).
+    val s = try { Str(LangStore.peek(ctx)) } catch (_: Exception) { Str("en") }
     try {
         val uri = FileProvider.getUriForFile(ctx, "${ctx.packageName}.files", file)
         val mime = android.webkit.MimeTypeMap.getSingleton()
@@ -337,8 +349,8 @@ fun openFileExternal(ctx: android.content.Context, file: File) {
             .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         // resolveActivity требует <queries> в манифесте (API 30+), поэтому полагаемся
         // на перехват ActivityNotFoundException вместо предварительной проверки.
-        ctx.startActivity(Intent.createChooser(i, "Открыть"))
+        ctx.startActivity(Intent.createChooser(i, s.t("Open")))
     } catch (_: Exception) {
-        android.widget.Toast.makeText(ctx, "Не удалось открыть файл", android.widget.Toast.LENGTH_SHORT).show()
+        android.widget.Toast.makeText(ctx, s.t("Failed to open file"), android.widget.Toast.LENGTH_SHORT).show()
     }
 }

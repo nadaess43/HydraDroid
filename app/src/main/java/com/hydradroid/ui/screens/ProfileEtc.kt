@@ -29,13 +29,14 @@ import com.hydradroid.data.local.boolPrefFlow
 import com.hydradroid.data.local.intPrefFlow
 import com.hydradroid.data.local.setBoolPref
 import com.hydradroid.data.local.setIntPref
+import com.hydradroid.data.local.setLanguage
 import com.hydradroid.data.local.setPref
 import com.hydradroid.data.local.stringPrefFlow
 import com.hydradroid.data.remote.HydraApiClient
-import com.hydradroid.openSignIn
 import com.hydradroid.ui.components.HydraButton
 import com.hydradroid.ui.components.HydraCard
 import com.hydradroid.ui.components.HydraEmptyState
+import com.hydradroid.ui.i18n.ls
 import com.hydradroid.ui.theme.HydraColors
 import kotlinx.coroutines.launch
 
@@ -43,7 +44,8 @@ import kotlinx.coroutines.launch
 // Вкладки «игры/ачивки» серверного профиля на телефоне-каталоге не нужны:
 // библиотека — локальная (экран «Библиотека»), ачивки — на странице игры.
 @Composable
-fun ProfileScreen(userId: String = "me") {
+fun ProfileScreen(userId: String = "me", onSignIn: () -> Unit = {}) {
+    val s = ls()
     var me by remember { mutableStateOf<com.hydradroid.data.model.UserDetails?>(null) }
     var friends by remember { mutableStateOf<List<com.hydradroid.data.model.Friend>>(emptyList()) }
     var loading by remember { mutableStateOf(true) }
@@ -58,10 +60,10 @@ fun ProfileScreen(userId: String = "me") {
     if (!loading && me == null) {
         // Гость: порт sign-in из SidebarProfile
         HydraEmptyState(
-            title = "Вы не вошли",
-            hint = "Войдите через Hydra, чтобы видеть профиль и друзей",
+            title = s.t("You are not signed in"),
+            hint = s.t("Sign in to see profile, friends and cloud"),
             icon = { Icon(Icons.Default.PersonOff, null, tint = HydraColors.SecondaryText60, modifier = Modifier.size(48.dp)) },
-            action = { HydraButton("Войти", { openSignIn(ctx) }, kind = "cloud") },
+            action = { HydraButton(s.t("Sign in"), onSignIn, kind = "cloud") },
             modifier = Modifier.fillMaxSize()
         )
         return
@@ -85,7 +87,7 @@ fun ProfileScreen(userId: String = "me") {
                 }
                 Spacer(Modifier.width(16.dp))
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.weight(1f)) {
-                    Text(me?.displayName?.ifBlank { null } ?: "Гость", style = MaterialTheme.typography.headlineMedium)
+                    Text(me?.displayName?.ifBlank { null } ?: s.t("Guest"), style = MaterialTheme.typography.headlineMedium)
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             "@${me?.username?.ifBlank { null } ?: "—"}",
@@ -97,15 +99,15 @@ fun ProfileScreen(userId: String = "me") {
                             onClick = {
                                 val cm = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                                 cm.setPrimaryClip(ClipData.newPlainText("username", me!!.username))
-                                Toast.makeText(ctx, "Скопировано", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(ctx, s.t("Copied"), Toast.LENGTH_SHORT).show()
                             },
                             modifier = Modifier.size(32.dp)
                         ) {
-                            Icon(Icons.Default.ContentCopy, "Копировать", tint = HydraColors.SecondaryText60, modifier = Modifier.size(18.dp))
+                            Icon(Icons.Default.ContentCopy, s.t("Copy"), tint = HydraColors.SecondaryText60, modifier = Modifier.size(18.dp))
                         }
                     }
                     if (me?.subscription != null) {
-                        Text("Hydra Cloud активна", color = HydraColors.Success, style = MaterialTheme.typography.bodySmall)
+                        Text(s.t("Hydra Cloud active"), color = HydraColors.Success, style = MaterialTheme.typography.bodySmall)
                     }
                 }
             }
@@ -117,14 +119,14 @@ fun ProfileScreen(userId: String = "me") {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Друзья", style = MaterialTheme.typography.headlineSmall)
+                Text(s.t("Friends"), style = MaterialTheme.typography.headlineSmall)
                 Text("${friends.size}", color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodyMedium)
             }
         }
         if (friends.isEmpty()) {
             item {
                 Text(
-                    "Список друзей пуст или не загрузился",
+                    s.t("Friend list is empty or failed to load"),
                     color = HydraColors.SecondaryText60,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -136,7 +138,7 @@ fun ProfileScreen(userId: String = "me") {
                     headlineContent = { Text(f.displayName.ifBlank { "?" }) },
                     supportingContent = {
                         Text(
-                            if (f.isOnline) (f.currentGame?.title?.ifBlank { null } ?: "В сети") else "Не в сети",
+                            if (f.isOnline) (f.currentGame?.title?.ifBlank { null } ?: s.t("Online")) else s.t("Offline"),
                             color = if (f.isOnline) HydraColors.Success else HydraColors.SecondaryText60
                         )
                     },
@@ -161,6 +163,7 @@ fun ProfileScreen(userId: String = "me") {
 // Разблокировки синхронизирует Hydra Cloud на ПК; здесь — серверные данные игры.
 @Composable
 fun AchievementsScreen(objectId: String = "", shop: String = "steam") {
+    val s = ls()
     var loading by remember { mutableStateOf(objectId.isNotBlank()) }
     var failed by remember { mutableStateOf(false) }
 
@@ -172,13 +175,13 @@ fun AchievementsScreen(objectId: String = "", shop: String = "steam") {
     }
 
     Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Достижения", style = MaterialTheme.typography.headlineMedium)
+        Text(s.t("Achievements"), style = MaterialTheme.typography.headlineMedium)
         HydraCard {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Default.EmojiEvents, null, tint = HydraColors.Warning, modifier = Modifier.size(32.dp))
                 Spacer(Modifier.width(12.dp))
                 Text(
-                    "Очки и разблокировки подтягиваются из Hydra Cloud.",
+                    s.t("Points and unlocks are synced from Hydra Cloud."),
                     style = MaterialTheme.typography.bodyMedium, color = HydraColors.Body
                 )
             }
@@ -189,14 +192,14 @@ fun AchievementsScreen(objectId: String = "", shop: String = "steam") {
             }
         } else if (failed) {
             HydraEmptyState(
-                title = "Нет данных",
-                hint = "Откройте достижения со страницы конкретной игры",
+                title = s.t("No data"),
+                hint = s.t("Open achievements from a specific game page"),
                 icon = { Icon(Icons.Default.EmojiEvents, null, tint = HydraColors.SecondaryText60, modifier = Modifier.size(48.dp)) }
             )
         } else {
             HydraEmptyState(
-                title = "Список пуст",
-                hint = "У этой игры пока нет синхронизированных достижений",
+                title = s.t("List is empty"),
+                hint = s.t("This game has no synced achievements yet"),
                 icon = { Icon(Icons.Default.EmojiEvents, null, tint = HydraColors.SecondaryText60, modifier = Modifier.size(48.dp)) }
             )
         }
@@ -208,15 +211,15 @@ fun AchievementsScreen(objectId: String = "", shop: String = "steam") {
 private fun notificationTitle(type: String): String {
     val t = type.uppercase()
     return when {
-        "FRIEND" in t -> "Друзья"
-        "BADGE" in t -> "Награда"
-        "REVIEW" in t -> "Отзыв"
-        "SOUVENIR" in t -> "Сувенир"
+        "FRIEND" in t -> "Friends"
+        "BADGE" in t -> "Reward"
+        "REVIEW" in t -> "Review"
+        "SOUVENIR" in t -> "Souvenir"
         "RETROACHIEVEMENTS" in t -> "RetroAchievements"
         "CLOUD_GIFT" in t || "CLOUD" in t -> "Hydra Cloud"
-        "DOWNLOAD" in t || "EXTRACT" in t -> "Загрузки"
-        "ACHIEVEMENT" in t -> "Достижение"
-        else -> "Уведомление"
+        "DOWNLOAD" in t || "EXTRACT" in t -> "Downloads"
+        "ACHIEVEMENT" in t -> "Achievement"
+        else -> "Notification"
     }
 }
 
@@ -229,10 +232,11 @@ private fun notificationDetail(n: com.hydradroid.data.model.HydraNotification): 
 // Порт pages/notifications: иконка по типу + текст + время, непрочитанные — с точкой.
 @Composable
 fun NotificationsScreen() {
+    val s = ls()
     var items by remember { mutableStateOf<List<com.hydradroid.data.model.HydraNotification>>(emptyList()) }
     var loading by remember { mutableStateOf(true) }
-    LaunchedEffect(Unit) {
-        try { items = HydraApiClient.service.getNotifications().notifications } catch (_: Exception) {}
+    LaunchedEffect(s.lang) {
+        try { items = HydraApiClient.service.getNotifications(if (s.isRu) "ru" else "en").notifications } catch (_: Exception) {}
         loading = false
     }
     when {
@@ -240,8 +244,8 @@ fun NotificationsScreen() {
             CircularProgressIndicator(color = HydraColors.SecondaryText60)
         }
         items.isEmpty() -> HydraEmptyState(
-            title = "Нет уведомлений",
-            hint = "Здесь появятся новости о достижениях, друзьях и загрузках",
+            title = s.t("No notifications"),
+            hint = s.t("News about achievements, friends and downloads will appear here"),
             icon = { Icon(Icons.Default.NotificationsOff, null, tint = HydraColors.SecondaryText60, modifier = Modifier.size(48.dp)) },
             modifier = Modifier.fillMaxSize()
         )
@@ -258,7 +262,7 @@ fun NotificationsScreen() {
                 }
                 val detail = notificationDetail(n)
                 ListItem(
-                    headlineContent = { Text(notificationTitle(n.type)) },
+                    headlineContent = { Text(s.t(notificationTitle(n.type))) },
                     supportingContent = {
                         Column {
                             if (detail != null) Text(detail, color = HydraColors.Body)
@@ -281,20 +285,14 @@ fun NotificationsScreen() {
 
 // Порт pages/settings: секции Account / Language / Debrid / Downloads / Sources / About
 // одной колонкой — так удобно на телефоне.
-private val AppLanguages = listOf(
-    "ru" to "Русский", "en" to "English", "uk" to "Українська", "be" to "Беларуская",
-    "pt-BR" to "Português (BR)", "pt-PT" to "Português (PT)", "es" to "Español",
-    "de" to "Deutsch", "fr" to "Français", "it" to "Italiano", "pl" to "Polski",
-    "tr" to "Türkçe", "zh" to "中文", "ja" to "日本語", "ko" to "한국어",
-    "ar" to "العربية", "nl" to "Nederlands", "cs" to "Čeština", "hu" to "Magyar",
-    "ro" to "Română", "vi" to "Tiếng Việt", "kk" to "Қазақша", "uz" to "O'zbekcha"
-)
+private val AppLanguages = listOf("en" to "English", "ru" to "Русский")
 
 @Composable
-fun SettingsScreen(onProfile: () -> Unit, onNotifications: () -> Unit) {
+fun SettingsScreen(onProfile: () -> Unit, onNotifications: () -> Unit, onSignIn: () -> Unit = {}) {
+    val s = ls()
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
-    val language by stringPrefFlow(ctx, PrefKeys.LANGUAGE, "ru").collectAsState(initial = "ru")
+    val language by stringPrefFlow(ctx, PrefKeys.LANGUAGE, "en").collectAsState(initial = "en")
     val debrid by stringPrefFlow(ctx, PrefKeys.REAL_DEBRID_TOKEN).collectAsState(initial = "")
     val torbox by stringPrefFlow(ctx, PrefKeys.TORBOX_TOKEN).collectAsState(initial = "")
     val premiumize by stringPrefFlow(ctx, PrefKeys.PREMIUMIZE_TOKEN, "").collectAsState(initial = "")
@@ -317,16 +315,16 @@ fun SettingsScreen(onProfile: () -> Unit, onNotifications: () -> Unit) {
 
     LazyColumn(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         item {
-            Text("Настройки", style = MaterialTheme.typography.headlineMedium)
+            Text(s.t("Settings"), style = MaterialTheme.typography.headlineMedium)
         }
         item {
             HydraCard {
-                Text("Аккаунт Hydra", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
+                Text(s.t("Hydra account"), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
                 if (signedIn) {
-                    Text("Вы вошли", color = HydraColors.Success, style = MaterialTheme.typography.bodyMedium)
+                    Text(s.t("Signed in"), color = HydraColors.Success, style = MaterialTheme.typography.bodyMedium)
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        HydraButton("Профиль", onProfile, kind = "outline", modifier = Modifier.weight(1f))
-                        HydraButton("Выйти", {
+                        HydraButton(s.t("Profile"), onProfile, kind = "outline", modifier = Modifier.weight(1f))
+                        HydraButton(s.t("Sign out"), {
                             TokenStore.clear(ctx)
                             HydraApiClient.accessToken = null
                             signedIn = false
@@ -334,16 +332,16 @@ fun SettingsScreen(onProfile: () -> Unit, onNotifications: () -> Unit) {
                     }
                 } else {
                     Text(
-                        "Войдите, чтобы видеть профиль, друзей и облако",
+                        s.t("Sign in to see profile, friends and cloud"),
                         color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodyMedium
                     )
-                    HydraButton("Войти через Hydra", { openSignIn(ctx) }, kind = "cloud", modifier = Modifier.fillMaxWidth())
+                    HydraButton(s.t("Sign in with Hydra"), onSignIn, kind = "cloud", modifier = Modifier.fillMaxWidth())
                 }
             }
         }
         item {
             HydraCard {
-                Text("Язык", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
+                Text(s.t("Language"), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
                 var exp by remember { mutableStateOf(false) }
                 OutlinedButton(
                     onClick = { exp = true }, modifier = Modifier.fillMaxWidth(),
@@ -354,7 +352,7 @@ fun SettingsScreen(onProfile: () -> Unit, onNotifications: () -> Unit) {
                 DropdownMenu(exp, { exp = false }) {
                     AppLanguages.forEach { (code, label) ->
                         DropdownMenuItem(text = { Text(label) }, onClick = {
-                            scope.launch { setPref(ctx, PrefKeys.LANGUAGE, code) }; exp = false
+                            scope.launch { setLanguage(ctx, code) }; exp = false
                         })
                     }
                 }
@@ -362,15 +360,15 @@ fun SettingsScreen(onProfile: () -> Unit, onNotifications: () -> Unit) {
         }
         item {
             HydraCard {
-                Text("Дебрид-сервисы", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
+                Text(s.t("Debrid services"), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
                 Text(
-                    "Прямые ссылки для загрузок на телефоне",
+                    s.t("Direct links for downloads on your phone"),
                     color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall
                 )
-                OutlinedTextField(debridEdit, { debridEdit = it }, label = { Text("Real-Debrid API token") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                OutlinedTextField(torboxEdit, { torboxEdit = it }, label = { Text("TorBox API token") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                OutlinedTextField(premiumizeEdit, { premiumizeEdit = it }, label = { Text("Premiumize API key") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
-                HydraButton("Сохранить", {
+                OutlinedTextField(debridEdit, { debridEdit = it }, label = { Text(s.t("Real-Debrid API token")) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                OutlinedTextField(torboxEdit, { torboxEdit = it }, label = { Text(s.t("TorBox API token")) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                OutlinedTextField(premiumizeEdit, { premiumizeEdit = it }, label = { Text(s.t("Premiumize API key")) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                HydraButton(s.t("Save"), {
                     scope.launch {
                         setPref(ctx, PrefKeys.REAL_DEBRID_TOKEN, debridEdit)
                         setPref(ctx, PrefKeys.TORBOX_TOKEN, torboxEdit)
@@ -378,7 +376,7 @@ fun SettingsScreen(onProfile: () -> Unit, onNotifications: () -> Unit) {
                         savedTick = true
                     }
                 }, kind = "primary", modifier = Modifier.fillMaxWidth())
-                if (savedTick) Text("Сохранено", color = HydraColors.Success, style = MaterialTheme.typography.bodySmall)
+                if (savedTick) Text(s.t("Saved"), color = HydraColors.Success, style = MaterialTheme.typography.bodySmall)
             }
         }
         item {
@@ -389,9 +387,9 @@ fun SettingsScreen(onProfile: () -> Unit, onNotifications: () -> Unit) {
         }
         item {
             HydraCard {
-                Text("О приложении", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
+                Text(s.t("About"), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
                 Text(
-                    "HydraDroid — каталог, торренты и библиотека Hydra для телефона.",
+                    s.t("HydraDroid — Hydra catalogue, torrents and library for your phone."),
                     color = HydraColors.Body, style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -403,6 +401,7 @@ fun SettingsScreen(onProfile: () -> Unit, onNotifications: () -> Unit) {
 
 @Composable
 private fun DownloadsSettingsCard() {
+    val s = ls()
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
     val downKb by intPrefFlow(ctx, PrefKeys.MAX_DOWNLOAD_SPEED, 0).collectAsState(initial = 0)
@@ -421,54 +420,54 @@ private fun DownloadsSettingsCard() {
         val label = DownloadFolder.savedLabel(ctx) ?: DownloadFolder.defaultDir(ctx).absolutePath
         folderLabel = label
         val dir = try { DownloadFolder.resolveRealDir(ctx) } catch (_: Exception) { DownloadFolder.defaultDir(ctx) }
-        freeSpace = "Свободно на диске: ${DownloadFolder.formatBytes(DownloadFolder.freeBytes(dir))}"
+        freeSpace = s.t("Free space: {0}", DownloadFolder.formatBytes(DownloadFolder.freeBytes(dir)))
     }
     LaunchedEffect(Unit) { refreshFolder() }
     val pickFolder = rememberFolderPicker { scope.launch { refreshFolder() } }
 
     HydraCard {
-        Text("Загрузки", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
+        Text(s.t("Downloads"), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
-                Text("Папка", style = MaterialTheme.typography.bodyMedium)
+                Text(s.t("Download folder"), style = MaterialTheme.typography.bodyMedium)
                 Text(folderLabel, color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall, maxLines = 1)
                 Text(freeSpace, color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall)
             }
-            TextButton(onClick = pickFolder) { Text("Выбрать") }
+            TextButton(onClick = pickFolder) { Text(s.t("Choose")) }
         }
         TextButton(onClick = {
             scope.launch { DownloadFolder.clearTree(ctx); refreshFolder() }
-        }) { Text("Использовать встроенную папку", color = HydraColors.SecondaryText60) }
+        }) { Text(s.t("Use built-in folder"), color = HydraColors.SecondaryText60) }
 
-        NumberPrefRow("Лимит скачивания (КБ/с, 0 — без лимита)", downKb) {
+        NumberPrefRow(s.t("Download limit (KB/s, 0 — unlimited)"), downKb) {
             scope.launch { setIntPref(ctx, PrefKeys.MAX_DOWNLOAD_SPEED, it) }
         }
-        NumberPrefRow("Лимит отдачи (КБ/с, 0 — без лимита)", upKb) {
+        NumberPrefRow(s.t("Upload limit (KB/s, 0 — unlimited)"), upKb) {
             scope.launch { setIntPref(ctx, PrefKeys.MAX_UPLOAD_SPEED, it) }
         }
-        NumberPrefRow("Макс. соединений (0 — авто)", maxConn) {
+        NumberPrefRow(s.t("Max connections (0 — auto)"), maxConn) {
             scope.launch { setIntPref(ctx, PrefKeys.MAX_CONNECTIONS, it) }
         }
-        NumberPrefRow("Рейтио сидирования ×100 (0 — без лимита)", seedRatio) {
+        NumberPrefRow(s.t("Seeding ratio ×100 (0 — unlimited)"), seedRatio) {
             scope.launch { setIntPref(ctx, PrefKeys.SEED_RATIO, it) }
         }
-        NumberPrefRow("Время сидирования (мин, 0 — без лимита)", seedTime) {
+        NumberPrefRow(s.t("Seeding time (min, 0 — unlimited)"), seedTime) {
             scope.launch { setIntPref(ctx, PrefKeys.SEED_TIME_MIN, it) }
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-            Text("Раздавать после завершения", style = MaterialTheme.typography.bodyMedium)
+            Text(s.t("Seed after completion"), style = MaterialTheme.typography.bodyMedium)
             Switch(seedAfter, { scope.launch { setBoolPref(ctx, PrefKeys.SEED_AFTER_COMPLETE, it) } })
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-            Text("Удалять архив после распаковки", style = MaterialTheme.typography.bodyMedium)
+            Text(s.t("Delete archive after extraction"), style = MaterialTheme.typography.bodyMedium)
             Switch(deleteArc, { scope.launch { setBoolPref(ctx, PrefKeys.DELETE_ARCHIVE_AFTER_EXTRACT, it) } })
         }
         OutlinedTextField(
             trackersEdit, { trackersEdit = it },
-            label = { Text("Дополнительные трекеры (по одному на строку)") },
+            label = { Text(s.t("Additional trackers (one per line)")) },
             modifier = Modifier.fillMaxWidth(), minLines = 2, maxLines = 5
         )
-        HydraButton("Сохранить трекеры", {
+        HydraButton(s.t("Save trackers"), {
             scope.launch { setPref(ctx, PrefKeys.GLOBAL_TRACKERS, trackersEdit) }
         }, kind = "outline", modifier = Modifier.fillMaxWidth())
     }
@@ -476,6 +475,7 @@ private fun DownloadsSettingsCard() {
 
 @Composable
 private fun NumberPrefRow(label: String, value: Int, onSave: (Int) -> Unit) {
+    val s = ls()
     var edit by remember(value) { mutableStateOf(if (value == 0) "" else value.toString()) }
     Row(verticalAlignment = Alignment.CenterVertically) {
         OutlinedTextField(
@@ -484,7 +484,7 @@ private fun NumberPrefRow(label: String, value: Int, onSave: (Int) -> Unit) {
             keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number)
         )
         Spacer(Modifier.width(8.dp))
-        TextButton(onClick = { onSave(edit.toIntOrNull() ?: 0) }) { Text("OK") }
+        TextButton(onClick = { onSave(edit.toIntOrNull() ?: 0) }) { Text(s.t("OK")) }
     }
 }
 
@@ -492,6 +492,7 @@ private fun NumberPrefRow(label: String, value: Int, onSave: (Int) -> Unit) {
 
 @Composable
 private fun DownloadSourcesCard() {
+    val s = ls()
     val ctx = LocalContext.current
     val repo = remember { LibraryRepository((ctx.applicationContext as HydraDroidApp).db) }
     val scope = rememberCoroutineScope()
@@ -507,43 +508,43 @@ private fun DownloadSourcesCard() {
         scope.launch { sources = try { repo.getSources() } catch (_: Exception) { emptyList() } }
     }
     HydraCard {
-        Text("Источники загрузок", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
+        Text(s.t("Download sources"), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
         Text(
-            "Включённые учитываются при поиске в каталоге и дают варианты загрузок. Кнопка ниже добавляет готовый набор популярных источников.",
+            s.t("Enabled sources are used for catalogue search and provide download options. The button below adds a bundled set of popular sources."),
             color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall
         )
-        HydraButton(if (busy) "Импорт…" else "Добавить готовые источники", {
+        HydraButton(if (busy) s.t("Importing…") else s.t("Add bundled sources"), {
             busy = true; note = null
             scope.launch {
                 try {
                     val added = com.hydradroid.data.local.BuiltinSources.import(ctx, repo)
-                    note = if (added > 0) "Добавлено: $added" else "Всё уже добавлено"
+                    note = if (added > 0) s.t("Added: {0}", added) else s.t("Everything already added")
                 } catch (e: Exception) {
-                    note = "Ошибка: ${e.message?.take(120)}"
+                    note = s.t("Error: {0}", e.message?.take(120))
                 }
                 reload()
                 busy = false
             }
         }, kind = "primary", enabled = !busy, modifier = Modifier.fillMaxWidth())
         if (note != null) Text(note!!, color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall)
-        if (sources.isEmpty()) Text("Источников нет — добавьте первый ниже", color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodyMedium)
-        sources.forEach { s ->
+        if (sources.isEmpty()) Text(s.t("No sources — add your first one below"), color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodyMedium)
+        sources.forEach { src ->
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(s.enabled, {
-                    scope.launch { repo.upsertSource(s.copy(enabled = it)); reload() }
+                Checkbox(src.enabled, {
+                    scope.launch { repo.upsertSource(src.copy(enabled = it)); reload() }
                 })
                 Column(Modifier.weight(1f)) {
-                    Text(s.name, style = MaterialTheme.typography.bodyMedium, maxLines = 1)
-                    Text(s.url, color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall, maxLines = 1)
+                    Text(src.name, style = MaterialTheme.typography.bodyMedium, maxLines = 1)
+                    Text(src.url, color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall, maxLines = 1)
                 }
-                IconButton(onClick = { scope.launch { repo.deleteSource(s.id); reload() } }) {
-                    Icon(Icons.Default.Delete, "Удалить", tint = HydraColors.SecondaryText60)
+                IconButton(onClick = { scope.launch { repo.deleteSource(src.id); reload() } }) {
+                    Icon(Icons.Default.Delete, s.t("Delete"), tint = HydraColors.SecondaryText60)
                 }
             }
         }
-        OutlinedTextField(name, { name = it }, label = { Text("Название") }, singleLine = true, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(url, { url = it }, label = { Text("URL источника (.json)") }, singleLine = true, modifier = Modifier.fillMaxWidth())
-        HydraButton(if (busy) "…" else "Добавить по URL", {
+        OutlinedTextField(name, { name = it }, label = { Text(s.t("Name")) }, singleLine = true, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(url, { url = it }, label = { Text(s.t("Source URL (.json)")) }, singleLine = true, modifier = Modifier.fillMaxWidth())
+        HydraButton(if (busy) "…" else s.t("Add by URL"), {
             busy = true; note = null
             scope.launch {
                 try {
@@ -558,7 +559,7 @@ private fun DownloadSourcesCard() {
                                 fingerprint = resolved.fingerprint
                             )
                         )
-                        note = "Добавлен: ${resolved.name}"
+                        note = s.t("Added: {0}", resolved.name)
                     } else {
                         // Сервер отклонил (422): сохраняем локально без fingerprint — позже можно повторить.
                         repo.upsertSource(
@@ -567,11 +568,11 @@ private fun DownloadSourcesCard() {
                                 name = name.ifBlank { url.trim() }, url = url.trim()
                             )
                         )
-                        note = "Не удалось распознать — сохранено локально"
+                        note = s.t("Could not parse — saved locally")
                     }
                     name = ""; url = ""
                 } catch (e: Exception) {
-                    note = "Ошибка: ${e.message?.take(120)}"
+                    note = s.t("Error: {0}", e.message?.take(120))
                 }
                 reload()
                 busy = false

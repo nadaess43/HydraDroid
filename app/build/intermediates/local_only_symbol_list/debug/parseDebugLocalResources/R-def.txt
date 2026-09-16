@@ -6,4 +6,5 @@ drawable ic_launcher_foreground
 mipmap ic_launcher
 string app_name
 style Theme.HydraDroid
+xml backup_rules
 xml file_paths

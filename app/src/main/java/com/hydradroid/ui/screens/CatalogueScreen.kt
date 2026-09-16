@@ -20,6 +20,8 @@ import com.hydradroid.data.model.CatalogueSearchPayload
 import com.hydradroid.data.model.CatalogueSearchResult
 import com.hydradroid.data.remote.HydraApiClient
 import com.hydradroid.ui.components.*
+import com.hydradroid.ui.i18n.Str
+import com.hydradroid.ui.i18n.ls
 import com.hydradroid.ui.theme.HydraColors
 import kotlinx.coroutines.launch
 
@@ -29,24 +31,28 @@ private const val PAGE = 30
 // Мобильная адаптация: вместо десктопной пагинации и правой панели фильтров —
 // кнопка «Показать ещё» и горизонтальный ряд жанров; сортировка с русскими метками.
 private val SortLabels = mapOf(
-    "popularity" to "По популярности",
-    "releaseDate" to "Сначала новые",
-    "alphabetical" to "По алфавиту",
-    "hydraScore" to "По оценке Hydra"
+    "popularity" to "Popularity",
+    "releaseDate" to "Release date",
+    "alphabetical" to "A-Z",
+    "hydraScore" to "Hydra score"
 )
 
 // Официальный result_count: "{{resultCount}} результатов" с русским склонением.
-private fun resultCountText(count: Int): String {
-    val form = when {
-        count % 10 == 1 && count % 100 != 11 -> "результат"
-        count % 10 in 2..4 && (count % 100 < 12 || count % 100 > 14) -> "результата"
-        else -> "результатов"
+private fun resultCountText(s: Str, count: Int): String {
+    if (s.isRu) {
+        val form = when {
+            count % 10 == 1 && count % 100 != 11 -> "результат"
+            count % 10 in 2..4 && (count % 100 < 12 || count % 100 > 14) -> "результата"
+            else -> "результатов"
+        }
+        return "$count $form"
     }
-    return "$count $form"
+    return if (count == 1) s.t("1 result") else s.t("{0} results", count)
 }
 
 @Composable
 fun CatalogueScreen(query: String, onQueryChange: (String) -> Unit, onGame: (String, String) -> Unit) {
+    val s = ls()
     val ctx = LocalContext.current
     val repo = remember { LibraryRepository((ctx.applicationContext as HydraDroidApp).db) }
     val scope = rememberCoroutineScope()
@@ -122,17 +128,17 @@ fun CatalogueScreen(query: String, onQueryChange: (String) -> Unit, onGame: (Str
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                if (loading) "Поиск…" else resultCountText(count),
+                if (loading) s.t("Search…") else resultCountText(s, count),
                 color = HydraColors.Body, style = MaterialTheme.typography.bodyMedium
             )
             var expanded by remember { mutableStateOf(false) }
             OutlinedButton(
                 onClick = { expanded = true },
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = HydraColors.Muted)
-            ) { Text(SortLabels[sort] ?: sort) }
+            ) { Text(s.t(SortLabels[sort] ?: sort)) }
             DropdownMenu(expanded, onDismissRequest = { expanded = false }) {
                 SortLabels.forEach { (k, label) ->
-                    DropdownMenuItem(text = { Text(label) }, onClick = { sort = k; expanded = false })
+                    DropdownMenuItem(text = { Text(s.t(label)) }, onClick = { sort = k; expanded = false })
                 }
             }
         }
@@ -158,7 +164,7 @@ fun CatalogueScreen(query: String, onQueryChange: (String) -> Unit, onGame: (Str
                     trailingIcon = { Icon(Icons.Default.Close, null, modifier = Modifier.size(16.dp)) }
                 )
                 TextButton(onClick = { onQueryChange(""); genre = null }) {
-                    Text("Очистить", color = HydraColors.SecondaryText60)
+                    Text(s.t("Clear"), color = HydraColors.SecondaryText60)
                 }
             }
             Spacer(Modifier.height(4.dp))
@@ -167,7 +173,7 @@ fun CatalogueScreen(query: String, onQueryChange: (String) -> Unit, onGame: (Str
         // Подсказки + история как SearchDropdown
         if (suggestions.isNotEmpty()) {
             Row(Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                suggestions.forEach { s -> AssistChip(onClick = { pickSuggestion(s.title) }, label = { Text(s.title) }) }
+                suggestions.forEach { sg -> AssistChip(onClick = { pickSuggestion(sg.title) }, label = { Text(sg.title) }) }
             }
             Spacer(Modifier.height(4.dp))
         } else if (query.isEmpty() && history.isNotEmpty()) {
@@ -176,7 +182,7 @@ fun CatalogueScreen(query: String, onQueryChange: (String) -> Unit, onGame: (Str
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Недавние поиски:", color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall)
+                Text(s.t("Recent searches:"), color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall)
                 history.take(8).forEach { h -> AssistChip(onClick = { onQueryChange(h) }, label = { Text(h) }) }
             }
             Spacer(Modifier.height(4.dp))
@@ -184,7 +190,7 @@ fun CatalogueScreen(query: String, onQueryChange: (String) -> Unit, onGame: (Str
         // Фильтр жанров
         if (genres.isNotEmpty()) {
             Row(Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FilterChip(genre == null, { genre = null }, { Text("Все") })
+                FilterChip(genre == null, { genre = null }, { Text(s.t("All")) })
                 genres.forEach { g -> FilterChip(genre == g, { genre = if (genre == g) null else g }, { Text(g) }) }
             }
             Spacer(Modifier.height(4.dp))
@@ -197,9 +203,9 @@ fun CatalogueScreen(query: String, onQueryChange: (String) -> Unit, onGame: (Str
             ) { items(12) { SkeletonCard() } }
         } else if (games.isEmpty()) {
             HydraEmptyState(
-                title = "Ничего не найдено",
-                hint = "Попробуйте изменить поиск или фильтры",
-                action = { HydraButton("Сбросить", { onQueryChange(""); genre = null }, kind = "outline") }
+                title = s.t("Nothing found"),
+                hint = s.t("Try changing your search or filters"),
+                action = { HydraButton(s.t("Reset"), { onQueryChange(""); genre = null }, kind = "outline") }
             )
         } else LazyVerticalGrid(
             rememberHydraGridCells(), modifier = Modifier.weight(1f),
@@ -217,7 +223,7 @@ fun CatalogueScreen(query: String, onQueryChange: (String) -> Unit, onGame: (Str
             if (games.size < count) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     HydraButton(
-                        if (loadingMore) "Загрузка…" else "Показать ещё (${count - games.size})",
+                        if (loadingMore) s.t("Loading…") else s.t("Show more ({0})", count - games.size),
                         { scope.launch { load(false) } },
                         kind = "outline", enabled = !loadingMore,
                         modifier = Modifier.fillMaxWidth()

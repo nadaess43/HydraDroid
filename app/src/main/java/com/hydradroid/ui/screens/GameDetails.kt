@@ -28,6 +28,7 @@ import com.hydradroid.data.LibraryRepository
 import com.hydradroid.data.model.*
 import com.hydradroid.data.remote.HydraApiClient
 import com.hydradroid.ui.components.*
+import com.hydradroid.ui.i18n.ls
 import com.hydradroid.ui.theme.HydraColors
 import kotlinx.coroutines.launch
 
@@ -42,6 +43,7 @@ fun GameDetailsScreen(
     onRollRandom: () -> Unit = {}
 ) {
     val ctx = LocalContext.current
+    val s = ls()
     val repo = remember { LibraryRepository((ctx.applicationContext as HydraDroidApp).db) }
     val scope = rememberCoroutineScope()
     var assets by remember { mutableStateOf<ShopAssets?>(null) }
@@ -69,7 +71,7 @@ fun GameDetailsScreen(
         try { assets = HydraApiClient.service.getGameAssets(shop, objectId) } catch (_: Exception) {}
         try {
             details = HydraApiClient.service.getShopDetails(
-                mapOf("shop" to shop, "objectIds" to listOf(objectId), "language" to "russian")
+                mapOf("shop" to shop, "objectIds" to listOf(objectId), "language" to if (s.isRu) "russian" else "english")
             ).firstOrNull()?.data?.data
         } catch (_: Exception) {}
         try { stats = HydraApiClient.service.getGameStats(shop, objectId) } catch (_: Exception) {}
@@ -85,7 +87,7 @@ fun GameDetailsScreen(
             details?.detailed_description ?: details?.about_the_game ?: details?.short_description
         )
     }
-    val title = assets?.title ?: details?.name ?: "Загрузка…"
+    val title = assets?.title ?: details?.name ?: s.t("Loading…")
     val genreNames = remember(details) { details?.genres?.map { it.description } ?: emptyList() }
 
     LazyColumn(Modifier.fillMaxSize()) {
@@ -108,11 +110,11 @@ fun GameDetailsScreen(
                         // Игра уже в библиотеке: вместо мёртвой надписи — кнопка скачивания,
                         // дальше варианты как в оригинале (repacks-modal → движок).
                         if (added) HydraButton(
-                            "Скачать", { showAllRepacks = true },
+                            s.t("Download"), { showAllRepacks = true },
                             kind = "primary", modifier = Modifier.weight(1f)
                         )
                         else HydraButton(
-                            "В библиотеку", {
+                            s.t("Add to library"), {
                                 scope.launch {
                                     val g = CatalogueSearchResult(
                                         id = objectId, objectId = objectId, title = title,
@@ -124,12 +126,12 @@ fun GameDetailsScreen(
                             }, kind = "primary", modifier = Modifier.weight(1f)
                         )
                         HydraButton(
-                            "Достижения", { onAchievements(shop, objectId) },
+                            s.t("Achievements"), { onAchievements(shop, objectId) },
                             kind = "outline", modifier = Modifier.weight(1f)
                         )
                         // Кубик «Удиви меня» прямо на странице игры — следующая случайная без возврата.
                         IconButton(onClick = onRollRandom, modifier = Modifier.size(40.dp)) {
-                            Icon(Icons.Default.Casino, "Удиви меня", tint = HydraColors.Muted, modifier = Modifier.size(22.dp))
+                            Icon(Icons.Default.Casino, s.t("Surprise me"), tint = HydraColors.Muted, modifier = Modifier.size(22.dp))
                         }
                     }
                 }
@@ -139,7 +141,7 @@ fun GameDetailsScreen(
         if (plainDesc.isNotBlank()) {
             item {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text("Об игре", style = MaterialTheme.typography.headlineSmall)
+                    Text(s.t("About the game"), style = MaterialTheme.typography.headlineSmall)
                     Text(
                         plainDesc,
                         maxLines = if (expandedDesc) Int.MAX_VALUE else 6,
@@ -147,7 +149,7 @@ fun GameDetailsScreen(
                     )
                     TextButton({ expandedDesc = !expandedDesc }) {
                         Text(
-                            if (expandedDesc) "Скрыть" else "Показать больше",
+                            if (expandedDesc) s.t("Show less") else s.t("Show more"),
                             color = HydraColors.SecondaryText60
                         )
                     }
@@ -159,7 +161,7 @@ fun GameDetailsScreen(
         if (shots.isNotEmpty()) {
             item {
                 Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Галерея", style = MaterialTheme.typography.headlineSmall)
+                    Text(s.t("Gallery"), style = MaterialTheme.typography.headlineSmall)
                     Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         shots.forEach { url ->
                             AsyncImage(url, null, modifier = Modifier.width(240.dp).height(135.dp)
@@ -173,9 +175,9 @@ fun GameDetailsScreen(
         }
         item {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                SectionTitle("Варианты загрузки", count = repacks.size.takeIf { it > 0 })
+                SectionTitle(s.t("Download options"), count = repacks.size.takeIf { it > 0 })
                 if (repacks.isEmpty()) Text(
-                    "Нет источников",
+                    s.t("No sources"),
                     color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodyMedium
                 )
                 repacks.take(20).forEach { r ->
@@ -190,12 +192,12 @@ fun GameDetailsScreen(
                         }
                         if (r.uris.isEmpty() && r.unavailableUris.isEmpty()) {
                             Text(
-                                "Ссылки уточняются — откройте позже",
+                                s.t("Links pending — check back later"),
                                 color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall
                             )
                         }
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            HydraButton("Скачать", {
+                            HydraButton(s.t("Download"), {
                                 downloadRepack = r
                                 downloadEntity = com.hydradroid.data.local.DownloadEntity(
                                     id = r.id, objectId = objectId, shop = shop, title = r.title,
@@ -203,22 +205,22 @@ fun GameDetailsScreen(
                                     uri = r.uris.firstOrNull() ?: ""
                                 )
                             }, kind = "primary", enabled = r.uris.isNotEmpty() || r.unavailableUris.isNotEmpty())
-                            HydraButton("В очередь", {
-                                scope.launch { repo.enqueueRepack(shop, objectId, r); queuedMsg = "«${r.title}» добавлен в очередь загрузок" }
+                            HydraButton(s.t("Queue"), {
+                                scope.launch { repo.enqueueRepack(shop, objectId, r); queuedMsg = s.t("\"{0}\" added to the download queue", r.title) }
                             }, kind = "outline")
                         }
                     }
                 }
                 if (repacks.size > 20) {
                     HydraButton(
-                        "Показать все (${repacks.size})",
+                        s.t("Show all ({0})", repacks.size),
                         { showAllRepacks = true },
                         kind = "outline", modifier = Modifier.fillMaxWidth()
                     )
                 }
                 if (hltb.isNotEmpty()) {
                     Spacer(Modifier.height(4.dp))
-                    Text("Время прохождения", style = MaterialTheme.typography.headlineSmall)
+                    Text(s.t("How Long to Beat"), style = MaterialTheme.typography.headlineSmall)
                     hltb.forEach {
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                             Text(it.title, color = HydraColors.Body, style = MaterialTheme.typography.bodyMedium)
@@ -227,15 +229,15 @@ fun GameDetailsScreen(
                     }
                 }
                 Spacer(Modifier.height(4.dp))
-                SectionTitle("Отзывы", count = reviews.size.takeIf { it > 0 })
+                SectionTitle(s.t("Reviews"), count = reviews.size.takeIf { it > 0 })
                 if (reviews.isEmpty()) Text(
-                    "Пока нет отзывов",
+                    s.t("No reviews yet"),
                     color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodyMedium
                 )
                 reviews.take(10).forEach { rev ->
-                    val author = rev.user?.displayName?.ifBlank { null } ?: "Игрок"
+                    val author = rev.user?.displayName?.ifBlank { null } ?: s.t("Player")
                     val text = com.hydradroid.ui.cleanHtml(
-                        rev.translations["ru"] ?: rev.translations["en"] ?: rev.reviewHtml
+                        rev.translations[if (s.isRu) "ru" else "en"] ?: rev.translations["en"] ?: rev.reviewHtml
                     ).take(400)
                     HydraCard {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -260,7 +262,7 @@ fun GameDetailsScreen(
     queuedMsg?.let { msg ->
         AlertDialog(
             onDismissRequest = { queuedMsg = null },
-            title = { Text("Очередь") }, text = { Text(msg) },
+            title = { Text(s.t("Queue")) }, text = { Text(msg) },
             confirmButton = { TextButton({ queuedMsg = null }) { Text("OK") } }
         )
     }
@@ -272,7 +274,7 @@ fun GameDetailsScreen(
             onDismiss = { downloadEntity = null; downloadRepack = null },
             onStarted = {
                 downloadEntity = null; downloadRepack = null
-                queuedMsg = "Загрузка запущена — прогресс на вкладке «Загрузки»"
+                queuedMsg = s.t("Download started — progress on the \"Downloads\" tab")
             }
         )
     }

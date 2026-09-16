@@ -10,6 +10,7 @@ object Routes {
     const val PROFILE = "profile/{userId}"
     const val ACHIEVEMENTS = "achievements?objectId={objectId}&shop={shop}"
     const val NOTIFICATIONS = "notifications"
+    const val AUTH_SOON = "auth-soon"
 
     fun game(shop: String, objectId: String) = "game/$shop/$objectId"
     fun profile(userId: String) = "profile/$userId"

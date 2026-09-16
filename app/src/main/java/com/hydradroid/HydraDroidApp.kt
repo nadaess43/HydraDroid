@@ -18,11 +18,25 @@ class HydraDroidApp : Application(), ImageLoaderFactory {
     lateinit var db: HydraDatabase
     override fun onCreate() {
         super.onCreate()
-        db = Room.databaseBuilder(this, HydraDatabase::class.java, "hydra-db")
-            .fallbackToDestructiveMigration() // dev-база v1→v2 без миграций
-            .build()
-        // Восстановление сессии как в оригинале (LevelDB userCredentials)
-        HydraApiClient.accessToken = TokenStore.getAccess(this)
+        db = try {
+            Room.databaseBuilder(this, HydraDatabase::class.java, "hydra-db")
+                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigrationOnDowngrade()
+                .build()
+        } catch (_: Exception) {
+            // Corrupted/restored DB file (backup downgrade): wipe once and recreate.
+            try { deleteDatabase("hydra-db") } catch (_: Exception) {}
+            Room.databaseBuilder(this, HydraDatabase::class.java, "hydra-db")
+                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigrationOnDowngrade()
+                .build()
+        }
+        // Session restore (never let a broken keystore kill the splash screen).
+        try {
+            HydraApiClient.accessToken = TokenStore.getAccess(this)
+        } catch (_: Exception) {
+            HydraApiClient.accessToken = null
+        }
         // Порт handleUnauthorizedError: протухший токен → разлогин с чисткой.
         HydraApiClient.onUnauthorized = {
             try {

@@ -1,20 +1,20 @@
 -- Merging decision tree log ---
 provider#androidx.core.content.FileProvider
-INJECTED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:40:9-48:20
+INJECTED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:41:9-49:20
 	android:grantUriPermissions
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:44:13-47
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:45:13-47
 	android:authorities
 		INJECTED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:42:13-57
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:43:13-57
 	android:exported
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:43:13-37
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:44:13-37
 	android:name
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:41:13-62
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:42:13-62
 manifest
-ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:2:1-50:12
-INJECTED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:2:1-50:12
-INJECTED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:2:1-50:12
-INJECTED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:2:1-50:12
+ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:2:1-51:12
+INJECTED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:2:1-51:12
+INJECTED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:2:1-51:12
+INJECTED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:2:1-51:12
 MERGED from [androidx.paging:paging-compose-android:3.3.5] C:\Users\kk951\.gradle\caches\transforms-4\c3b05767b1c8dbcf31629385a0c896ce\transformed\paging-compose-release\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.work:work-runtime-ktx:2.9.0] C:\Users\kk951\.gradle\caches\transforms-4\626200c931fef39ce64172f3862fa757\transformed\work-runtime-ktx-2.9.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.work:work-runtime:2.9.0] C:\Users\kk951\.gradle\caches\transforms-4\742238163716bbd6f2835321e09db7fe\transformed\work-runtime-2.9.0\AndroidManifest.xml:17:1-145:12
@@ -134,8 +134,8 @@ MERGED from [androidx.work:work-runtime:2.9.0] C:\Users\kk951\.gradle\caches\tra
 	android:name
 		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:9:22-65
 application
-ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:11:5-49:19
-INJECTED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:11:5-49:19
+ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:11:5-50:19
+INJECTED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:11:5-50:19
 MERGED from [androidx.work:work-runtime:2.9.0] C:\Users\kk951\.gradle\caches\transforms-4\742238163716bbd6f2835321e09db7fe\transformed\work-runtime-2.9.0\AndroidManifest.xml:28:5-143:19
 MERGED from [androidx.work:work-runtime:2.9.0] C:\Users\kk951\.gradle\caches\transforms-4\742238163716bbd6f2835321e09db7fe\transformed\work-runtime-2.9.0\AndroidManifest.xml:28:5-143:19
 MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\kk951\.gradle\caches\transforms-4\eaf83a24af97eaf49acc03a4cbd19786\transformed\room-runtime-2.6.1\AndroidManifest.xml:23:5-29:19
@@ -157,69 +157,71 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\kk951\.gradle\cach
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.13.1] C:\Users\kk951\.gradle\caches\transforms-4\3d134e80ffe1f9c11615fa21bdf1a683\transformed\core-1.13.1\AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:16:9-35
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:17:9-35
 	android:label
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:15:9-41
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:16:9-41
+	android:fullBackupContent
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:14:9-54
 	android:icon
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:14:9-43
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:15:9-43
 	android:allowBackup
 		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:13:9-35
 	android:theme
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:17:9-48
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:18:9-48
 	android:name
 		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:12:9-38
 activity#com.hydradroid.MainActivity
-ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:18:9-33:20
+ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:19:9-34:20
 	android:exported
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:20:13-36
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:21:13-36
 	android:theme
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:21:13-52
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:22:13-52
 	android:name
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:19:13-41
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:20:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:22:13-25:29
+ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:23:13-26:29
 action#android.intent.action.MAIN
-ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:23:17-69
+ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:24:17-69
 	android:name
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:23:25-66
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:24:25-66
 category#android.intent.category.LAUNCHER
-ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:24:17-77
+ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:25:17-77
 	android:name
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:24:27-74
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:25:27-74
 intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:host:auth+data:scheme:hydradroid
-ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:27:13-32:29
+ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:28:13-33:29
 action#android.intent.action.VIEW
-ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:28:17-69
+ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:29:17-69
 	android:name
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:28:25-66
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:29:25-66
 category#android.intent.category.DEFAULT
-ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:29:17-76
+ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:30:17-76
 	android:name
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:29:27-73
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:30:27-73
 category#android.intent.category.BROWSABLE
-ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:30:17-78
+ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:31:17-78
 	android:name
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:30:27-75
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:31:27-75
 data
-ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:31:17-73
+ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:32:17-73
 	android:host
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:31:51-70
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:32:51-70
 	android:scheme
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:31:23-50
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:32:23-50
 service#com.hydradroid.service.DownloadService
-ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:35:9-38:56
+ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:36:9-39:56
 	android:exported
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:37:13-37
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:38:13-37
 	android:foregroundServiceType
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:38:13-53
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:39:13-53
 	android:name
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:36:13-52
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:37:13-52
 meta-data#android.support.FILE_PROVIDER_PATHS
-ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:45:13-47:54
+ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:46:13-48:54
 	android:resource
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:47:17-51
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:48:17-51
 	android:name
-		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:46:17-67
+		ADDED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml:47:17-67
 uses-sdk
 INJECTED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\AndroidManifest.xml

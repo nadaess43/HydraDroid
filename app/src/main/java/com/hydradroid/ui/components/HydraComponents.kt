@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.hydradroid.data.model.CatalogueSearchResult
 import com.hydradroid.data.model.GameStats
+import com.hydradroid.ui.i18n.ls
 import com.hydradroid.ui.theme.HydraColors
 
 // ── Порт home.scss __cards: 1 колонка (<768) → 2 (768+) → 3 (1250+) → 4 (1600+).
@@ -180,6 +181,7 @@ fun GameCard(
     showAddButton: Boolean = false,
     added: Boolean = false
 ) {
+    val s = ls()
     Box(
         modifier = Modifier
             .fillMaxWidth().height(180.dp)
@@ -211,7 +213,7 @@ fun GameCard(
                     IconButton(onClick = onAdd, enabled = !added, modifier = Modifier.size(28.dp)) {
                         Icon(
                             if (added) Icons.Default.Check else Icons.Default.Add,
-                            contentDescription = if (added) "В библиотеке" else "В библиотеку",
+                            contentDescription = if (added) s.t("In library") else s.t("Add to library"),
                             tint = if (added) HydraColors.Success else HydraColors.Muted,
                             modifier = Modifier.size(18.dp)
                         )
@@ -290,6 +292,7 @@ fun LibraryCard(
     onCollections: (() -> Unit)? = null,
     onDownload: (() -> Unit)? = null
 ) {
+    val s = ls()
     Box(
         modifier = Modifier
             .fillMaxWidth().height(180.dp)            .shadow(8.dp, RoundedCornerShape(4.dp))            .clip(RoundedCornerShape(4.dp))
@@ -301,12 +304,12 @@ fun LibraryCard(
         Box(Modifier.fillMaxSize().background(HydraColors.GameCardBackdrop))
         Row(Modifier.align(Alignment.TopEnd).padding(4.dp)) {
             if (onCollections != null) IconButton(onClick = onCollections, modifier = Modifier.size(36.dp)) {
-                Icon(Icons.Default.CollectionsBookmark, "Коллекции", tint = HydraColors.TextBright, modifier = Modifier.size(20.dp))
+                Icon(Icons.Default.CollectionsBookmark, s.t("Collections"), tint = HydraColors.TextBright, modifier = Modifier.size(20.dp))
             }
             IconButton(onClick = onFavorite, modifier = Modifier.size(36.dp)) {
                 Icon(
                     if (favorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                    contentDescription = "Избранное",
+                    contentDescription = s.t("Favorite"),
                     tint = if (favorite) Color.White else HydraColors.TextBright,
                     modifier = Modifier.size(20.dp)
                 )
@@ -322,10 +325,10 @@ fun LibraryCard(
                 maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f)
             )
             if (onDownload != null) IconButton(onClick = onDownload, modifier = Modifier.size(36.dp)) {
-                Icon(Icons.Default.Download, "Скачать", tint = HydraColors.BrandTeal, modifier = Modifier.size(20.dp))
+                Icon(Icons.Default.Download, s.t("Download"), tint = HydraColors.BrandTeal, modifier = Modifier.size(20.dp))
             }
             IconButton(onClick = onRemove, modifier = Modifier.size(36.dp)) {
-                Icon(Icons.Default.Close, contentDescription = "Удалить", tint = HydraColors.TextBright, modifier = Modifier.size(18.dp))
+                Icon(Icons.Default.Close, contentDescription = s.t("Remove"), tint = HydraColors.TextBright, modifier = Modifier.size(18.dp))
             }
         }
     }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- EncryptedSharedPreferences file must NOT be restored without its keystore
+     key (reinstall -> decryption failure -> startup crash on splash).
+     Room DB is rebuilt/destructively migrated, no need to back it up either. -->
+<full-backup-content>
+    <exclude domain="sharedpref" path="hydra_auth.xml" />
+    <exclude domain="sharedpref" path="hydra_auth_plain.xml" />
+    <exclude domain="database" path="hydra-db" />
+    <exclude domain="database" path="hydra-db-journal" />
+    <exclude domain="database" path="hydra-db-wal" />
+    <exclude domain="database" path="hydra-db-shm" />
+</full-backup-content>

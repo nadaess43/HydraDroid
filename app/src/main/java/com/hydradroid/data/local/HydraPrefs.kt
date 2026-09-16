@@ -36,7 +36,14 @@ object PrefKeys {
     val DELETE_ARCHIVE_AFTER_EXTRACT = booleanPreferencesKey("delete_archive_after_extract")
 }
 
-fun languageFlow(ctx: Context) = ctx.prefs.data.map { it[PrefKeys.LANGUAGE] ?: "ru" }
+fun languageFlow(ctx: Context) = ctx.prefs.data.map { it[PrefKeys.LANGUAGE] ?: LangStore.peek(ctx) }
+
+/** Single writer for app language: DataStore (reactive UI) + sync mirror (service). */
+suspend fun setLanguage(ctx: Context, code: String) {
+    val c = if (code.startsWith("ru")) "ru" else "en"
+    ctx.prefs.edit { it[PrefKeys.LANGUAGE] = c }
+    LangStore.persist(ctx, c)
+}
 
 suspend fun saveSearchHistory(ctx: Context, query: String) {
     val q = query.trim().replace("\n", " ")

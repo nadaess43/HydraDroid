@@ -19,6 +19,7 @@ import com.hydradroid.data.download.HttpDownloader
 import com.hydradroid.data.local.DownloadEntity
 import com.hydradroid.data.local.DownloadFolder
 import com.hydradroid.data.local.HttpTarget
+import com.hydradroid.data.local.LangStore
 import com.hydradroid.data.local.PrefKeys
 import com.hydradroid.data.local.intPrefFlow
 import com.hydradroid.data.local.stringPrefFlow
@@ -71,14 +72,18 @@ class DownloadService : Service() {
     private val db get() = (applicationContext as HydraDroidApp).db
     private val notif get() = getSystemService(NotificationManager::class.java)
 
+    /** No composition here — language comes from the LangStore mirror (kept in sync by setLanguage). */
+    private fun isRu(): Boolean = try { LangStore.peek(this).startsWith("ru") } catch (_: Exception) { false }
+    private fun tx(en: String, ru: String): String = if (isRu()) ru else en
+
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onCreate() {
         super.onCreate()
         notif.createNotificationChannel(
-            NotificationChannel(CHANNEL, "Загрузки", NotificationManager.IMPORTANCE_LOW)
+            NotificationChannel(CHANNEL, tx("Downloads", "Загрузки"), NotificationManager.IMPORTANCE_LOW)
         )
-        startForegroundCompat(statusNotification("Сервис загрузок запущен", null))
+        startForegroundCompat(statusNotification(tx("Download service running", "Сервис загрузок запущен"), null))
         pollJob = scope.launch { pollLoop() }
         // Перезапуск не завершённых трансферов после смерти процесса:
         // magnet/.torrent/HTTP-ссылки и прогресс лежат в Room — восстанавливаем без потерь.
@@ -174,13 +179,13 @@ class DownloadService : Service() {
             val maxConn = applicationContext.prefsInt(PrefKeys.MAX_CONNECTIONS)
             TorrentEngine.applyLimits(downKb, upKb, maxConn)
         } catch (e: Exception) {
-            dao.enqueue(d.copy(status = "error", error = "Движок: ${e.message}"))
+            dao.enqueue(d.copy(status = "error", error = tx("Engine: ", "Движок: ") + e.message))
             return
         }
         val saveDir = try {
             DownloadFolder.resolveRealDir(applicationContext, sanitize(d.title))
         } catch (e: Exception) {
-            dao.enqueue(d.copy(status = "error", error = "Папка: ${e.message}"))
+            dao.enqueue(d.copy(status = "error", error = tx("Folder: ", "Папка: ") + e.message))
             return
         }
         dao.enqueue(d.copy(status = "fetching", saveDir = saveDir.absolutePath, error = null))
@@ -198,7 +203,7 @@ class DownloadService : Service() {
                 val bytes = fetchBytes(d.uri)
                 // Bencode-словарь начинается с 'd': иначе это не торрент, а прямая ссылка.
                 if (bytes.isEmpty() || bytes[0] != 'd'.code.toByte()) {
-                    throw Exception("Ссылка не отдаёт .torrent — для прямых файлов выберите тип «HTTP»")
+                    throw Exception(tx("Link doesn't serve a .torrent file — pick HTTP type for direct files", "Ссылка не отдаёт .torrent — для прямых файлов выберите тип «HTTP»"))
                 }
                 val tmp = File(cacheDir, "torrents/${d.id}.torrent")
                 tmp.parentFile?.mkdirs()
@@ -220,7 +225,7 @@ class DownloadService : Service() {
         if (httpJobs[d.id]?.isActive == true) return
         // Magnet по HTTP качать бессмысленно — сразу честная ошибка.
         if (d.uri.startsWith("magnet:")) {
-            dao.enqueue(d.copy(status = "error", error = "Magnet-ссылка: выберите тип «Торрент»"))
+            dao.enqueue(d.copy(status = "error", error = tx("Magnet link: pick Torrent type", "Magnet-ссылка: выберите тип «Торрент»")))
             return
         }
         dao.enqueue(d.copy(status = "downloading", error = null))
@@ -366,11 +371,11 @@ class DownloadService : Service() {
                 _extractProgress.value = _extractProgress.value - id
                 val deleteSrc = applicationContext.prefsBool(PrefKeys.DELETE_ARCHIVE_AFTER_EXTRACT, false)
                 if (deleteSrc) { try { archive.delete() } catch (_: Exception) {} }
-                notifyDone("Распаковано: ${archive.name}", "extract_$id")
+                notifyDone(tx("Extracted: ", "Распаковано: ") + archive.name, "extract_$id")
             } catch (e: Exception) {
                 if (e is kotlinx.coroutines.CancellationException) throw e
                 _extractProgress.value = _extractProgress.value - id
-                notifyError("Не распаковано: ${e.message?.take(200)}")
+                notifyError(tx("Extraction failed: ", "Не распаковано: ") + e.message?.take(200))
             } finally {
                 extractJobs.remove(id)
             }
@@ -465,7 +470,7 @@ class DownloadService : Service() {
     private fun statusNotification(title: String, text: String?): Notification {
         return NotificationCompat.Builder(this, CHANNEL)
             .setContentTitle(title)
-            .setContentText(text ?: "Торренты и HTTP-загрузки")
+            .setContentText(text ?: tx("Torrents and HTTP downloads", "Торренты и HTTP-загрузки"))
             .setSmallIcon(R.drawable.ic_download)
             .setContentIntent(contentIntent())
             .setOngoing(true)
@@ -478,8 +483,8 @@ class DownloadService : Service() {
         } catch (_: Exception) { emptyList() }
         val down = active.sumOf { it.downSpeed }
         val up = active.sumOf { it.upSpeed }
-        val text = if (active.isEmpty()) "Очередь пуста"
-        else "Активно: ${active.size} · ↓ ${DownloadFolder.formatSpeed(down)} · ↑ ${DownloadFolder.formatSpeed(up)}"
+        val text = if (active.isEmpty()) tx("Queue is empty", "Очередь пуста")
+        else (if (isRu()) "Активно: " else "Active: ") + "${active.size} · ↓ ${DownloadFolder.formatSpeed(down)} · ↑ ${DownloadFolder.formatSpeed(up)}"
         notif.notify(FOREGROUND_ID, statusNotification("HydraDroid", text))
     }
 
@@ -487,8 +492,8 @@ class DownloadService : Service() {
         notif.notify(
             key.hashCode(),
             NotificationCompat.Builder(this, CHANNEL)
-                .setContentTitle("Завершено: $title")
-                .setContentText("Нажмите, чтобы открыть загрузки")
+                .setContentTitle(tx("Completed: ", "Завершено: ") + title)
+                .setContentText(tx("Tap to open downloads", "Нажмите, чтобы открыть загрузки"))
                 .setSmallIcon(R.drawable.ic_download)
                 .setContentIntent(contentIntent())
                 .setAutoCancel(true)
@@ -500,7 +505,7 @@ class DownloadService : Service() {
         notif.notify(
             text.hashCode(),
             NotificationCompat.Builder(this, CHANNEL)
-                .setContentTitle("Ошибка")
+                .setContentTitle(tx("Error", "Ошибка"))
                 .setContentText(text)
                 .setSmallIcon(R.drawable.ic_download)
                 .setContentIntent(contentIntent())
@@ -514,7 +519,7 @@ class DownloadService : Service() {
         val req = okhttp3.Request.Builder().url(url).header("User-Agent", "HydraDroid").build()
         HttpDownloader.client.newCall(req).execute().use {
             if (!it.isSuccessful) throw Exception("HTTP ${it.code}")
-            return (it.body ?: throw Exception("Пустой ответ")).bytes()
+            return (it.body ?: throw Exception("Empty response")).bytes()
         }
     }
 

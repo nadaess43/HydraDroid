@@ -13,6 +13,7 @@ import com.hydradroid.data.LibraryRepository
 import com.hydradroid.data.model.CatalogueSearchResult
 import com.hydradroid.data.remote.HydraApiClient
 import com.hydradroid.ui.components.*
+import com.hydradroid.ui.i18n.ls
 import com.hydradroid.ui.theme.HydraColors
 import kotlinx.coroutines.launch
 
@@ -35,6 +36,7 @@ fun HomeScreen(
     onSurprise: () -> Unit = {},
     surpriseRolling: Boolean = false
 ) {
+    val s = ls()
     val ctx = LocalContext.current
     val repo = remember { LibraryRepository((ctx.applicationContext as HydraDroidApp).db) }
     var tab by remember { mutableStateOf("hot") }
@@ -113,9 +115,9 @@ fun HomeScreen(
     }
 
     val sectionTitle = when (tab) {
-        "weekly" -> "Лучшие игры недели"
-        "achievements" -> "Игры с достижениями"
-        else -> "Сейчас популярно"
+        "weekly" -> s.t("Top games of the week")
+        "achievements" -> s.t("Games with achievements")
+        else -> s.t("Trending now")
     }
 
     when {
@@ -125,10 +127,10 @@ fun HomeScreen(
         ) { items(12) { SkeletonCard() } }
 
         failed && games.isEmpty() -> HydraEmptyState(
-            title = "Не удалось загрузить",
-            hint = "Проверьте соединение и попробуйте ещё раз",
+            title = s.t("Failed to load"),
+            hint = s.t("Check your connection and try again"),
             action = {
-                HydraButton("Повторить", {
+                HydraButton(s.t("Retry"), {
                     feeds = feeds - tab
                     refresh++
                 }, kind = "outline")
@@ -160,7 +162,7 @@ fun HomeScreen(
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         // Официальные названия из ru-локали Hydra (без эмодзи — телефон).
-                        listOf("hot" to "Сейчас популярно", "weekly" to "Лучшие игры недели", "achievements" to "Игры с достижениями").forEach { (k, label) ->
+                        listOf("hot" to s.t("Trending now"), "weekly" to s.t("Top games of the week"), "achievements" to s.t("Games with achievements")).forEach { (k, label) ->
                             HydraButton(
                                 label, { tab = k },
                                 kind = if (tab == k) "primary" else "outline",
@@ -169,7 +171,7 @@ fun HomeScreen(
                         }
                     }
                     HydraButton(
-                        "Удиви меня",
+                        s.t("Surprise me"),
                         onSurprise,
                         kind = "outline", enabled = !surpriseRolling,
                         modifier = Modifier.fillMaxWidth()
@@ -193,13 +195,13 @@ fun HomeScreen(
                         Modifier.fillMaxWidth().padding(8.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        HydraButton("Показать ещё", { loadMore() }, kind = "outline")
+                        HydraButton(s.t("Show more"), { loadMore() }, kind = "outline")
                     }
                     !feed.hasMore && games.isNotEmpty() -> Box(
                         Modifier.fillMaxWidth().padding(16.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("Это всё", color = HydraColors.SecondaryText60)
+                        Text(s.t("That's all"), color = HydraColors.SecondaryText60)
                     }
                 }
             }

@@ -116,8 +116,8 @@ object DownloadFolder {
 
     fun formatBytes(bytes: Long): String {
         if (bytes < 0) return "—"
-        if (bytes < 1024) return "$bytes Б"
-        val units = arrayOf("КБ", "МБ", "ГБ", "ТБ")
+        if (bytes < 1024) return "$bytes B"
+        val units = arrayOf("KB", "MB", "GB", "TB")
         var v = bytes.toDouble() / 1024
         var u = 0
         while (v >= 1024 && u < units.size - 1) { v /= 1024; u++ }
@@ -125,13 +125,13 @@ object DownloadFolder {
     }
 
     fun formatSpeed(bytesPerSec: Long): String =
-        if (bytesPerSec <= 0) "—" else "${formatBytes(bytesPerSec)}/с"
+        if (bytesPerSec <= 0) "—" else "${formatBytes(bytesPerSec)}/s"
 
     fun formatEta(sec: Long): String {
         if (sec < 0) return "—"
-        if (sec < 60) return "${sec}с"
-        if (sec < 3600) return "${sec / 60}м ${sec % 60}с"
-        return "${sec / 3600}ч ${(sec % 3600) / 60}м"
+        if (sec < 60) return "${sec}s"
+        if (sec < 3600) return "${sec / 60}m ${sec % 60}s"
+        return "${sec / 3600}h ${(sec % 3600) / 60}m"
     }
 }
 

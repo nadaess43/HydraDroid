@@ -56,7 +56,7 @@ object ArchiveExtractor {
             Kind.RAR -> extractRar(archive, destDir, onProgress)
             Kind.TAR -> extractTar(archive, destDir, onProgress)
             Kind.UNSUPPORTED -> throw UnsupportedException(
-                "«${archive.name}»: ISO и многотомные архивы здесь не распаковываются — откройте внешним приложением."
+                "${archive.name}: ISO and multi-volume archives cannot be extracted here - open with an external app."
             )
         }
     }
@@ -166,7 +166,7 @@ object ArchiveExtractor {
     private fun safeTarget(dest: File, entryName: String): File {
         val clean = entryName.replace('\\', '/').trimStart('/')
         val target = File(dest, clean).canonicalFile
-        require(target.path.startsWith(dest.canonicalPath + File.separator)) { "Опасный путь в архиве: $entryName" }
+        require(target.path.startsWith(dest.canonicalPath + File.separator)) { "Unsafe path in archive: $entryName" }
         return target
     }
 }

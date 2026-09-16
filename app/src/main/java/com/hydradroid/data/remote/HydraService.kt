@@ -67,7 +67,7 @@ interface HydraService {
     suspend fun getFriends(): FriendsResponse
 
     @GET("/profile/notifications")
-    suspend fun getNotifications(@Query("locale") locale: String = "ru"): NotificationsResponse
+    suspend fun getNotifications(@Query("locale") locale: String = "en"): NotificationsResponse
 
     @POST("/download-sources/changes")
     suspend fun checkDownloadChanges(@Body body: Map<String, Any>): List<Map<String, Any>>

@@ -1,0 +1,80 @@
+package com.hydradroid.ui.i18n
+
+/**
+ * Profile / Achievements / Notifications / Settings strings.
+ * Keys are the current English literals 1:1 (see ProfileEtc.kt);
+ * values are the Russian originals from git HEAD.
+ * Identical-in-Russian keys (Hydra Cloud, RetroAchievements,
+ * Real-Debrid/TorBox/Premiumize token labels, OK) are intentionally
+ * omitted: [Str.t] falls back to English for them.
+ */
+val trProfile = mapOf(
+    // ── Profile ──
+    "You are not signed in" to "Вы не вошли",
+    "Sign in to see profile, friends and cloud" to "Войдите, чтобы видеть профиль, друзей и облако",
+    "Sign in" to "Войти",
+    "Guest" to "Гость",
+    "Copied" to "Скопировано",
+    "Copy" to "Копировать",
+    "Hydra Cloud active" to "Hydra Cloud активна",
+    "Friends" to "Друзья",
+    "Friend list is empty or failed to load" to "Список друзей пуст или не загрузился",
+    "Online" to "В сети",
+    "Offline" to "Не в сети",
+    // ── Achievements ──
+    "Achievements" to "Достижения",
+    "Points and unlocks are synced from Hydra Cloud." to "Очки и разблокировки подтягиваются из Hydra Cloud.",
+    "No data" to "Нет данных",
+    "Open achievements from a specific game page" to "Откройте достижения со страницы конкретной игры",
+    "List is empty" to "Список пуст",
+    "This game has no synced achievements yet" to "У этой игры пока нет синхронизированных достижений",
+    // ── Notifications ──
+    "No notifications" to "Нет уведомлений",
+    "News about achievements, friends and downloads will appear here" to "Здесь появятся новости о достижениях, друзьях и загрузках",
+    "Reward" to "Награда",
+    "Review" to "Отзыв",
+    "Souvenir" to "Сувенир",
+    "Achievement" to "Достижение",
+    "Notification" to "Уведомление",
+    // ── Settings ──
+    "Settings" to "Настройки",
+    "Hydra account" to "Аккаунт Hydra",
+    "Signed in" to "Вы вошли",
+    "Profile" to "Профиль",
+    "Sign out" to "Выйти",
+    "Sign in with Hydra" to "Войти через Hydra",
+    "Language" to "Язык",
+    "Debrid services" to "Дебрид-сервисы",
+    "Direct links for downloads on your phone" to "Прямые ссылки для загрузок на телефоне",
+    "Save" to "Сохранить",
+    "Saved" to "Сохранено",
+    "About" to "О приложении",
+    "HydraDroid — Hydra catalogue, torrents and library for your phone." to "HydraDroid — каталог, торренты и библиотека Hydra для телефона.",
+    "Free space: {0}" to "Свободно на диске: {0}",
+    "Downloads" to "Загрузки",
+    "Download folder" to "Папка",
+    "Choose" to "Выбрать",
+    "Use built-in folder" to "Использовать встроенную папку",
+    "Download limit (KB/s, 0 — unlimited)" to "Лимит скачивания (КБ/с, 0 — без лимита)",
+    "Upload limit (KB/s, 0 — unlimited)" to "Лимит отдачи (КБ/с, 0 — без лимита)",
+    "Max connections (0 — auto)" to "Макс. соединений (0 — авто)",
+    "Seeding ratio ×100 (0 — unlimited)" to "Рейтио сидирования ×100 (0 — без лимита)",
+    "Seeding time (min, 0 — unlimited)" to "Время сидирования (мин, 0 — без лимита)",
+    "Seed after completion" to "Раздавать после завершения",
+    "Delete archive after extraction" to "Удалять архив после распаковки",
+    "Additional trackers (one per line)" to "Дополнительные трекеры (по одному на строку)",
+    "Save trackers" to "Сохранить трекеры",
+    "Download sources" to "Источники загрузок",
+    "Enabled sources are used for catalogue search and provide download options. The button below adds a bundled set of popular sources." to "Включённые учитываются при поиске в каталоге и дают варианты загрузок. Кнопка ниже добавляет готовый набор популярных источников.",
+    "Add bundled sources" to "Добавить готовые источники",
+    "Importing…" to "Импорт…",
+    "Added: {0}" to "Добавлено: {0}",
+    "Everything already added" to "Всё уже добавлено",
+    "Error: {0}" to "Ошибка: {0}",
+    "No sources — add your first one below" to "Источников нет — добавьте первый ниже",
+    "Delete" to "Удалить",
+    "Name" to "Название",
+    "Source URL (.json)" to "URL источника (.json)",
+    "Add by URL" to "Добавить по URL",
+    "Could not parse — saved locally" to "Не удалось распознать — сохранено локально",
+)

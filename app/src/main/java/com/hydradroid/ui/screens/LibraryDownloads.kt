@@ -34,6 +34,7 @@ import com.hydradroid.ui.components.HydraCard
 import com.hydradroid.ui.components.HydraEmptyState
 import com.hydradroid.ui.components.LibraryCard
 import com.hydradroid.ui.components.rememberHydraGridCells
+import com.hydradroid.ui.i18n.ls
 import com.hydradroid.ui.theme.HydraColors
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -41,15 +42,16 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 private val LibrarySortLabels = mapOf(
-    "recently_played" to "Недавние",
-    "most_played" to "По времени",
-    "title_asc" to "А–Я",
-    "title_desc" to "Я–А"
+    "recently_played" to "Recent",
+    "most_played" to "Most played",
+    "title_asc" to "A–Z",
+    "title_desc" to "Z–A"
 )
 
 // Порт pages/library: CategoryFilter + коллекции + избранное + sort + view + живой поиск + скан папки.
 @Composable
 fun LibraryScreen(onGame: (String, String) -> Unit) {
+    val s = ls()
     val ctx = LocalContext.current
     val repo = remember { LibraryRepository((ctx.applicationContext as HydraDroidApp).db) }
     val scope = rememberCoroutineScope()
@@ -107,12 +109,12 @@ fun LibraryScreen(onGame: (String, String) -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Официальные категории библиотеки из ru-локали: Все / ПК / Классика.
-            listOf("all" to "Все", "pc" to "ПК", "classics" to "Классика").forEach { (k, l) ->
-                FilterChip(k == category, { category = k; collection = null }, { Text(l) })
+            listOf("all" to "All", "pc" to "PC", "classics" to "Retro").forEach { (k, l) ->
+                FilterChip(k == category, { category = k; collection = null }, { Text(s.t(l)) })
             }
             FilterChip(
                 favoritesOnly, { favoritesOnly = !favoritesOnly },
-                { Text("Избранное") },
+                { Text(s.t("Favorites")) },
                 leadingIcon = {
                     Icon(
                         if (favoritesOnly) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
@@ -124,26 +126,26 @@ fun LibraryScreen(onGame: (String, String) -> Unit) {
             var sortExp by remember { mutableStateOf(false) }
             var menuExp by remember { mutableStateOf(false) }
             Box {
-                IconButton(onClick = { sortExp = true }) { Icon(Icons.AutoMirrored.Filled.Sort, "Сортировка", tint = HydraColors.Muted) }
+                IconButton(onClick = { sortExp = true }) { Icon(Icons.AutoMirrored.Filled.Sort, s.t("Sort"), tint = HydraColors.Muted) }
                 DropdownMenu(sortExp, { sortExp = false }) {
                     LibrarySortLabels.forEach { (k, l) ->
-                        DropdownMenuItem(text = { Text(l) }, onClick = { sort = k; sortExp = false })
+                        DropdownMenuItem(text = { Text(s.t(l)) }, onClick = { sort = k; sortExp = false })
                     }
                 }
             }
             Box {
-                IconButton(onClick = { menuExp = true }) { Icon(Icons.Default.MoreVert, "Ещё", tint = HydraColors.Muted) }
+                IconButton(onClick = { menuExp = true }) { Icon(Icons.Default.MoreVert, s.t("More"), tint = HydraColors.Muted) }
                 DropdownMenu(menuExp, { menuExp = false }) {
                     DropdownMenuItem(
-                        text = { Text(if (view == "grid") "Вид: список" else "Вид: сетка") },
+                        text = { Text(if (view == "grid") s.t("View: list") else s.t("View: grid")) },
                         onClick = { view = if (view == "grid") "large" else "grid"; menuExp = false }
                     )
                     DropdownMenuItem(
-                        text = { Text("Новая коллекция") },
+                        text = { Text(s.t("New collection")) },
                         onClick = { showCreateCollection = true; menuExp = false }
                     )
                     DropdownMenuItem(
-                        text = { Text("Сканировать папку") },
+                        text = { Text(s.t("Scan folder")) },
                         onClick = { showScan = true; menuExp = false }
                     )
                 }
@@ -156,7 +158,7 @@ fun LibraryScreen(onGame: (String, String) -> Unit) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                FilterChip(collection == null, { collection = null }, { Text("Все коллекции") })
+                FilterChip(collection == null, { collection = null }, { Text(s.t("All collections")) })
                 collections.forEach { c ->
                     FilterChip(
                         collection == c.id, { collection = if (collection == c.id) null else c.id },
@@ -175,26 +177,26 @@ fun LibraryScreen(onGame: (String, String) -> Unit) {
         }
         OutlinedTextField(
             value = filter, onValueChange = { filter = it },
-            label = { Text("Поиск в библиотеке") },
+            label = { Text(s.t("Search library")) },
             leadingIcon = { Icon(Icons.Default.Search, null, tint = HydraColors.SecondaryText50) },
             trailingIcon = if (filter.isNotEmpty()) {
-                { IconButton(onClick = { filter = "" }) { Icon(Icons.Default.Close, "Очистить", tint = HydraColors.SecondaryText50) } }
+                { IconButton(onClick = { filter = "" }) { Icon(Icons.Default.Close, s.t("Clear"), tint = HydraColors.SecondaryText50) } }
             } else null,
             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
             singleLine = true
         )
         Spacer(Modifier.height(4.dp))
         Text(
-            "${LibrarySortLabels[sort]} · ${games.size}",
+            "${s.t(LibrarySortLabels[sort] ?: sort)} · ${games.size}",
             color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
         if (games.isEmpty()) {
             HydraEmptyState(
-                title = "Ваша библиотека пуста",
-                hint = "Добавьте игры из каталога или скачайте их, чтобы начать",
+                title = s.t("Your library is empty"),
+                hint = s.t("Add games from the catalog or download them to get started"),
                 icon = { Icon(Icons.Default.Book, null, tint = HydraColors.SecondaryText60, modifier = Modifier.size(48.dp)) },
-                action = { HydraButton("Сканировать папку", { showScan = true }, kind = "outline") }
+                action = { HydraButton(s.t("Scan folder"), { showScan = true }, kind = "outline") }
             )
         } else {
             LazyVerticalGrid(
@@ -209,7 +211,7 @@ fun LibraryScreen(onGame: (String, String) -> Unit) {
                             if (g.shop == "custom") {
                                 val f = g.localPath?.let { File(it) }
                                 if (f != null && f.exists()) openFileExternal(ctx, f)
-                                else android.widget.Toast.makeText(ctx, "Файл не найден", android.widget.Toast.LENGTH_SHORT).show()
+                                else android.widget.Toast.makeText(ctx, s.t("File not found"), android.widget.Toast.LENGTH_SHORT).show()
                             } else if (g.shop != "custom") onGame(g.shop, g.objectId)
                         },
                         onFavorite = { scope.launch { repo.toggleFavorite(g.key); reload() } },
@@ -219,7 +221,7 @@ fun LibraryScreen(onGame: (String, String) -> Unit) {
                             if (g.shop == "custom") {
                                 val f = g.localPath?.let { File(it) }
                                 if (f != null && f.exists()) openFileExternal(ctx, f)
-                                else android.widget.Toast.makeText(ctx, "Файл не найден", android.widget.Toast.LENGTH_SHORT).show()
+                                else android.widget.Toast.makeText(ctx, s.t("File not found"), android.widget.Toast.LENGTH_SHORT).show()
                             } else {
                                 repacksFor = g
                                 repacksList = emptyList()
@@ -262,17 +264,17 @@ fun LibraryScreen(onGame: (String, String) -> Unit) {
         var name by remember { mutableStateOf("") }
         AlertDialog(
             onDismissRequest = { showCreateCollection = false },
-            title = { Text("Новая коллекция") },
+            title = { Text(s.t("New collection")) },
             text = {
-                OutlinedTextField(name, { name = it.take(60) }, label = { Text("Название") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(name, { name = it.take(60) }, label = { Text(s.t("Name")) }, singleLine = true, modifier = Modifier.fillMaxWidth())
             },
             confirmButton = {
-                HydraButton("Создать", {
-                    scope.launch { repo.createCollection(name.ifBlank { "Без названия" }); reload() }
+                HydraButton(s.t("Create"), {
+                    scope.launch { repo.createCollection(name.ifBlank { s.t("Untitled") }); reload() }
                     showCreateCollection = false
                 }, kind = "primary", enabled = name.isNotBlank())
             },
-            dismissButton = { TextButton({ showCreateCollection = false }) { Text("Отмена") } }
+            dismissButton = { TextButton({ showCreateCollection = false }) { Text(s.t("Cancel")) } }
         )
     }
     if (showScan) {
@@ -305,7 +307,7 @@ fun LibraryScreen(onGame: (String, String) -> Unit) {
             onDismiss = { libEntity = null; libDownload = null },
             onStarted = {
                 libEntity = null; libDownload = null
-                android.widget.Toast.makeText(ctx, "Загрузка запущена", android.widget.Toast.LENGTH_SHORT).show()
+                android.widget.Toast.makeText(ctx, s.t("Download started"), android.widget.Toast.LENGTH_SHORT).show()
             }
         )
     }
@@ -322,6 +324,7 @@ private fun CollectionAssignDialog(
     repo: LibraryRepository,
     gameKey: String
 ) {
+    val s = ls()
     val scope = rememberCoroutineScope()
     var checked by remember { mutableStateOf<Set<String>>(emptySet()) }
     var newName by remember { mutableStateOf("") }
@@ -330,11 +333,11 @@ private fun CollectionAssignDialog(
     }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Коллекции", maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        title = { Text(s.t("Collections"), maxLines = 1, overflow = TextOverflow.Ellipsis) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(gameTitle, color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall)
-                if (collections.isEmpty()) Text("Коллекций пока нет — создайте первую ниже")
+                if (collections.isEmpty()) Text(s.t("No collections yet — create your first one below"))
                 collections.forEach { c ->
                     Row(
                         Modifier.fillMaxWidth().clickable {
@@ -353,25 +356,26 @@ private fun CollectionAssignDialog(
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     OutlinedTextField(
-                        newName, { newName = it.take(60) }, label = { Text("Новая…") },
+                        newName, { newName = it.take(60) }, label = { Text(s.t("New…")) },
                         singleLine = true, modifier = Modifier.weight(1f)
                     )
                     Spacer(Modifier.width(8.dp))
                     IconButton(onClick = {
-                        onCreate(newName.ifBlank { "Без названия" })
+                        onCreate(newName.ifBlank { s.t("Untitled") })
                         scope.launch { checked = repo.getGameCollections(gameKey).toSet() }
                         newName = ""
-                    }) { Icon(Icons.Default.Add, "Создать", tint = HydraColors.Muted) }
+                    }) { Icon(Icons.Default.Add, s.t("Create"), tint = HydraColors.Muted) }
                 }
             }
         },
-        confirmButton = { TextButton(onDismiss) { Text("Готово") } }
+        confirmButton = { TextButton(onDismiss) { Text(s.t("Done")) } }
     )
 }
 
 /** Скан папки: выбор SAF-дерева → поиск iso/архивов → добавление в библиотеку. */
 @Composable
 private fun FolderScanDialog(onDismiss: () -> Unit, onAdded: () -> Unit) {
+    val s = ls()
     val ctx = LocalContext.current
     val repo = remember { LibraryRepository((ctx.applicationContext as HydraDroidApp).db) }
     val scope = rememberCoroutineScope()
@@ -391,16 +395,16 @@ private fun FolderScanDialog(onDismiss: () -> Unit, onAdded: () -> Unit) {
     }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Сканирование папки") },
+        title = { Text(s.t("Scan folder")) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    "Ищем ISO и архивы (zip/7z/rar) и добавляем их в библиотеку как локальные игры.",
+                    s.t("We look for ISOs and archives (zip/7z/rar) and add them to the library as local games."),
                     color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall
                 )
-                HydraButton(if (scanning) "Сканируем…" else "Выбрать папку", { launcher.launch(null) }, kind = "outline", enabled = !scanning, modifier = Modifier.fillMaxWidth())
+                HydraButton(if (scanning) s.t("Scanning…") else s.t("Select folder"), { launcher.launch(null) }, kind = "outline", enabled = !scanning, modifier = Modifier.fillMaxWidth())
                 results?.let { list ->
-                    Text("Найдено: ${list.size}", style = MaterialTheme.typography.bodyMedium)
+                    Text(s.t("Found: {0}", list.size), style = MaterialTheme.typography.bodyMedium)
                     LazyColumn(Modifier.heightIn(max = 240.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         items(list.take(100), key = { it.path }) { f ->
                             Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -414,15 +418,15 @@ private fun FolderScanDialog(onDismiss: () -> Unit, onAdded: () -> Unit) {
                                 }
                                 TextButton(onClick = {
                                     scope.launch { repo.addCustom(f.name, f.path); added++; onAdded() }
-                                }) { Text("Добавить") }
+                                }) { Text(s.t("Add")) }
                             }
                         }
                     }
-                    if (added > 0) Text("Добавлено: $added", color = HydraColors.Success, style = MaterialTheme.typography.bodySmall)
+                    if (added > 0) Text(s.t("Added: {0}", added), color = HydraColors.Success, style = MaterialTheme.typography.bodySmall)
                 }
             }
         },
-        confirmButton = { TextButton(onDismiss) { Text("Закрыть") } }
+        confirmButton = { TextButton(onDismiss) { Text(s.t("Close")) } }
     )
 }
 
@@ -435,6 +439,7 @@ fun RepacksSheet(
     onDismiss: () -> Unit,
     onPick: (com.hydradroid.data.model.GameRepack) -> Unit
 ) {
+    val s = ls()
     var filter by remember { mutableStateOf("") }
     val shown = remember(repacks, filter) {
         if (filter.isBlank()) repacks
@@ -443,10 +448,10 @@ fun RepacksSheet(
     androidx.compose.ui.window.Dialog(onDismissRequest = onDismiss) {
         Surface(shape = MaterialTheme.shapes.large, color = HydraColors.DarkBackground) {
             Column(Modifier.padding(16.dp).heightIn(max = 520.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Варианты загрузки", style = MaterialTheme.typography.headlineSmall)
+                Text(s.t("Download options"), style = MaterialTheme.typography.headlineSmall)
                 Text(title, color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 OutlinedTextField(
-                    filter, { filter = it }, label = { Text("Поиск репаков") },
+                    filter, { filter = it }, label = { Text(s.t("Search repacks")) },
                     leadingIcon = { Icon(Icons.Default.Search, null, tint = HydraColors.SecondaryText50) },
                     modifier = Modifier.fillMaxWidth(), singleLine = true
                 )
@@ -455,8 +460,8 @@ fun RepacksSheet(
                         CircularProgressIndicator(color = HydraColors.SecondaryText60)
                     }
                     shown.isEmpty() -> HydraEmptyState(
-                        title = "Нет источников",
-                        hint = "Проверьте включённые источники в настройках"
+                        title = s.t("No sources"),
+                        hint = s.t("Check enabled sources in settings")
                     )
                     else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         items(shown, key = { it.id }) { r ->
@@ -485,6 +490,7 @@ fun RepacksSheet(
 
 @Composable
 fun DownloadsScreen() {
+    val s = ls()
     val ctx = LocalContext.current
     val repo = remember { LibraryRepository((ctx.applicationContext as HydraDroidApp).db) }
     val scope = rememberCoroutineScope()
@@ -514,33 +520,33 @@ fun DownloadsScreen() {
     LazyColumn(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         item {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Text("Загрузки", style = MaterialTheme.typography.headlineSmall)
+                Text(s.t("Downloads"), style = MaterialTheme.typography.headlineSmall)
                 Text("${queue.size}", color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodyMedium)
             }
             Text(
-                "Движок: libtorrent (DHT, magnet, .torrent, раздача) + HTTP с докачкой и Debrid.",
+                s.t("Engine: libtorrent + DHT + HTTP + Debrid"),
                 color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Папка: ", color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall)
+                Text(s.t("Folder: "), color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall)
                 Text(
                     folderLabel, style = MaterialTheme.typography.bodySmall, color = HydraColors.Body,
                     maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f)
                 )
-                TextButton(onClick = pickFolder) { Text("Изменить") }
+                TextButton(onClick = pickFolder) { Text(s.t("Change")) }
             }
         }
         if (queue.isEmpty()) {
             item {
                 HydraEmptyState(
-                    title = "Здесь так пусто...",
-                    hint = "Вы ещё ничего не скачали через Hydra, но никогда не поздно начать.",
+                    title = s.t("It's empty here..."),
+                    hint = s.t("You haven't downloaded anything via Hydra yet, but it's never too late to start."),
                     icon = { Icon(Icons.Default.Download, null, tint = HydraColors.SecondaryText60, modifier = Modifier.size(48.dp)) }
                 )
             }
         }
         if (active.isNotEmpty()) {
-            item { SectionHeader("В процессе (${active.size})") }
+            item { SectionHeader(s.t("In progress ({0})", active.size)) }
             items(active, key = { it.id }) { d ->
                 TransferCard(
                     d = d,
@@ -554,7 +560,7 @@ fun DownloadsScreen() {
             }
         }
         if (waiting.isNotEmpty()) {
-            item { SectionHeader("Загрузки в очереди (${waiting.size})") }
+            item { SectionHeader(s.t("Queued ({0})", waiting.size)) }
             items(waiting, key = { it.id }) { d ->
                 HydraCard {
                     Text(d.title, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
@@ -563,7 +569,7 @@ fun DownloadsScreen() {
                         color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall
                     )
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        HydraButton("Скачать", {
+                        HydraButton(s.t("Download"), {
                             scope.launch {
                                 val ids = try { repo.enabledSourceIds() } catch (_: Exception) { emptyList() }
                                 val repack = try {
@@ -574,7 +580,7 @@ fun DownloadsScreen() {
                                 startDialog = d
                             }
                         }, kind = "primary", modifier = Modifier.weight(1f))
-                        HydraButton("Удалить", {
+                        HydraButton(s.t("Delete"), {
                             scope.launch { repo.dequeue(d.id) }
                         }, kind = "danger", modifier = Modifier.weight(1f))
                     }
@@ -582,16 +588,16 @@ fun DownloadsScreen() {
             }
         }
         if (failed.isNotEmpty()) {
-            item { SectionHeader("Ошибки (${failed.size})") }
+            item { SectionHeader(s.t("Failed ({0})", failed.size)) }
             items(failed, key = { it.id }) { d ->
                 HydraCard {
                     Text(d.title, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                    Text(d.error ?: "Неизвестная ошибка", color = HydraColors.Error, style = MaterialTheme.typography.bodySmall)
+                    Text(d.error ?: s.t("Unknown error"), color = HydraColors.Error, style = MaterialTheme.typography.bodySmall)
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        HydraButton("Повторить", {
+                        HydraButton(s.t("Retry"), {
                             DownloadService.cmd(ctx, DownloadService.ACTION_START, d.id)
                         }, kind = "primary", modifier = Modifier.weight(1f))
-                        HydraButton("Удалить", {
+                        HydraButton(s.t("Delete"), {
                             scope.launch { repo.dequeue(d.id) }
                         }, kind = "danger", modifier = Modifier.weight(1f))
                     }
@@ -599,7 +605,7 @@ fun DownloadsScreen() {
             }
         }
         if (done.isNotEmpty()) {
-            item { SectionHeader("Завершено (${done.size})") }
+            item { SectionHeader(s.t("Completed ({0})", done.size)) }
             items(done, key = { it.id }) { d ->
                 // Поиск архива — IO: не блокируем главный поток при прокрутке.
                 var arc by remember(d.id, d.saveDir) { mutableStateOf<File?>(null) }
@@ -614,7 +620,7 @@ fun DownloadsScreen() {
                         listOfNotNull(
                             d.totalBytes.takeIf { it > 0 }?.let { DownloadFolder.formatBytes(it) },
                             d.saveDir
-                        ).joinToString(" · ").ifBlank { "Завершено" },
+                        ).joinToString(" · ").ifBlank { s.t("Completed") },
                         color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall
                     )
                     val prog = extractProgress[d.id]
@@ -622,16 +628,16 @@ fun DownloadsScreen() {
                         val (ed, et) = prog
                         if (et > 0) LinearProgressIndicator(progress = { (ed.toFloat() / et).coerceIn(0f, 1f) }, modifier = Modifier.fillMaxWidth())
                         else LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-                        Text("Распаковка… ${if (et > 0) "${(ed * 100 / et).toInt()}%" else ""}", color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall)
+                        Text(s.t("Extracting… {0}", if (et > 0) "${(ed * 100 / et).toInt()}%" else ""), color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall)
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         if (d.saveDir != null) {
-                            HydraButton("Файлы", { localDir = File(d.saveDir) }, kind = "outline", modifier = Modifier.weight(1f))
-                            if (arc != null) HydraButton("Распаковать", {
+                            HydraButton(s.t("Files"), { localDir = File(d.saveDir) }, kind = "outline", modifier = Modifier.weight(1f))
+                            if (arc != null) HydraButton(s.t("Extract"), {
                                 extractTarget = d.id to arc!!
                             }, kind = "primary", modifier = Modifier.weight(1f))
                         }
-                        HydraButton("Удалить", {
+                        HydraButton(s.t("Delete"), {
                             scope.launch { repo.dequeue(d.id) }
                         }, kind = "danger", modifier = Modifier.weight(1f))
                     }
@@ -662,18 +668,18 @@ fun DownloadsScreen() {
         var withFiles by remember { mutableStateOf(true) }
         AlertDialog(
             onDismissRequest = { deleteAsk = null },
-            title = { Text("Отменить загрузку?") },
+            title = { Text(s.t("Cancel download?")) },
             text = {
                 Column {
                     Text(d.title, style = MaterialTheme.typography.bodyMedium)
                     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable { withFiles = !withFiles }) {
                         Checkbox(withFiles, { withFiles = it })
-                        Text("Удалить файлы с диска")
+                        Text(s.t("Delete files"))
                     }
                 }
             },
             confirmButton = {
-                HydraButton("Удалить", {
+                HydraButton(s.t("Delete"), {
                     DownloadService.cmd(ctx, DownloadService.ACTION_CANCEL, d.id, withFiles)
                     scope.launch { kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
                         // Сервис тоже чистит запись; страховка:
@@ -682,29 +688,29 @@ fun DownloadsScreen() {
                     deleteAsk = null
                 }, kind = "danger")
             },
-            dismissButton = { TextButton({ deleteAsk = null }) { Text("Отмена") } }
+            dismissButton = { TextButton({ deleteAsk = null }) { Text(s.t("Cancel")) } }
         )
     }
     extractTarget?.let { (id, arc) ->
         AlertDialog(
             onDismissRequest = { extractTarget = null },
-            title = { Text("Распаковать?") },
+            title = { Text(s.t("Extract?")) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(arc.name, style = MaterialTheme.typography.bodyMedium)
                     Text(
-                        "В папку: ${arc.nameWithoutExtension}",
+                        s.t("To folder: {0}", arc.nameWithoutExtension),
                         color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall
                     )
                 }
             },
             confirmButton = {
-                HydraButton("Распаковать", {
+                HydraButton(s.t("Extract"), {
                     DownloadService.cmd(ctx, DownloadService.ACTION_EXTRACT, id, archivePath = arc.absolutePath)
                     extractTarget = null
                 }, kind = "primary")
             },
-            dismissButton = { TextButton({ extractTarget = null }) { Text("Отмена") } }
+            dismissButton = { TextButton({ extractTarget = null }) { Text(s.t("Cancel")) } }
         )
     }
 }
@@ -733,6 +739,7 @@ private fun TransferCard(
     onOpenDir: () -> Unit,
     onExtractPoll: () -> Pair<Long, Long>?
 ) {
+    val s = ls()
     HydraCard {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(d.title, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
@@ -740,12 +747,12 @@ private fun TransferCard(
         }
         if (d.status == "fetching" && d.totalBytes <= 0) {
             LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-            Text("Загрузка метаданных…", color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall)
+            Text(s.t("Loading metadata…"), color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall)
         } else if (d.kind == "HTTP" && d.totalBytes <= 0 && d.status == "downloading") {
             // Размер неизвестен (chunked): честный indeterminate + счётчик байт.
             LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
             Text(
-                "Загружено ${DownloadFolder.formatBytes(d.doneBytes)}",
+                s.t("Downloaded {0}", DownloadFolder.formatBytes(d.doneBytes)),
                 color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall
             )
         } else {
@@ -754,21 +761,21 @@ private fun TransferCard(
                 modifier = Modifier.fillMaxWidth()
             )
             Text(
-                "${(d.progress * 100).toInt()}% · ${DownloadFolder.formatBytes(d.doneBytes)} из ${DownloadFolder.formatBytes(d.totalBytes)}",
+                s.t("{0}% · {1} of {2}", (d.progress * 100).toInt(), DownloadFolder.formatBytes(d.doneBytes), DownloadFolder.formatBytes(d.totalBytes)),
                 color = HydraColors.SecondaryText60, style = MaterialTheme.typography.bodySmall
             )
         }
         val statsLine = buildList {
             if (d.status == "downloading" || d.status == "fetching") {
                 add("↓ ${DownloadFolder.formatSpeed(d.downSpeed)}")
-                if (d.etaSec >= 0) add("ETA ${DownloadFolder.formatEta(d.etaSec)}")
+                if (d.etaSec >= 0) add(s.t("ETA {0}", DownloadFolder.formatEta(d.etaSec)))
             }
             if (d.status == "seeding") add("↑ ${DownloadFolder.formatSpeed(d.upSpeed)}")
             if (d.kind == "TORRENT") {
-                add("пиры ${d.peers}")
-                add("сиды ${d.seeds}")
+                add(s.t("peers {0}", d.peers))
+                add(s.t("seeds {0}", d.seeds))
                 if (d.uploadBytes > 0 && d.totalBytes > 0) {
-                    add("рейтио %.2f".format(java.util.Locale.US, d.uploadBytes.toDouble() / d.totalBytes))
+                    add(s.t("ratio {0}", "%.2f".format(java.util.Locale.US, d.uploadBytes.toDouble() / d.totalBytes)))
                 }
             }
         }.joinToString(" · ")
@@ -778,16 +785,16 @@ private fun TransferCard(
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             if (d.status == "paused") {
-                HydraButton("Возобновить", onResume, kind = "primary", modifier = Modifier.weight(1f))
+                HydraButton(s.t("Resume"), onResume, kind = "primary", modifier = Modifier.weight(1f))
             } else {
-                HydraButton("Приостановить", onPause, kind = "outline", modifier = Modifier.weight(1f))
+                HydraButton(s.t("Pause"), onPause, kind = "outline", modifier = Modifier.weight(1f))
             }
             if (d.kind == "TORRENT" && d.infoHash != null) {
-                HydraButton("Файлы", onFiles, kind = "outline", modifier = Modifier.weight(1f))
+                HydraButton(s.t("Files"), onFiles, kind = "outline", modifier = Modifier.weight(1f))
             } else if (d.saveDir != null) {
-                HydraButton("Папка", onOpenDir, kind = "outline", modifier = Modifier.weight(1f))
+                HydraButton(s.t("Folder"), onOpenDir, kind = "outline", modifier = Modifier.weight(1f))
             }
-            HydraButton("Удалить", onCancel, kind = "danger", modifier = Modifier.weight(1f))
+            HydraButton(s.t("Delete"), onCancel, kind = "danger", modifier = Modifier.weight(1f))
         }
     }
 }

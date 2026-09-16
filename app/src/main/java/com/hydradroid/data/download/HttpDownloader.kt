@@ -52,7 +52,7 @@ object HttpDownloader {
         val resp = client.newCall(req).execute()
         resp.use {
             if (!it.isSuccessful) throw HttpException("HTTP ${it.code}")
-            val body = it.body ?: throw HttpException("Пустой ответ")
+            val body = it.body ?: throw HttpException("Empty response")
             val partial = it.code == 206
             val start = if (partial) resumeFrom else 0L
             val total = (body.contentLength().takeIf { l -> l > 0 }?.let { l -> l + start }
@@ -61,7 +61,7 @@ object HttpDownloader {
             when (target) {
                 is HttpTarget.File -> writeToFile(target.file, body.byteStream(), start, total, onProgress)
                 // SAF пишется через downloadToSaf(): DocumentFile не хранит ContentResolver.
-                is HttpTarget.Saf -> throw HttpException("Внутренняя ошибка цели")
+                is HttpTarget.Saf -> throw HttpException("Internal target error")
             }
             return total
         }
@@ -105,14 +105,14 @@ object HttpDownloader {
         val resp = client.newCall(req).execute()
         resp.use {
             if (!it.isSuccessful) throw HttpException("HTTP ${it.code}")
-            val body = it.body ?: throw HttpException("Пустой ответ")
+            val body = it.body ?: throw HttpException("Empty response")
             val partial = it.code == 206
             val start = if (partial) resumeFrom else 0L
             val file = if (start == 0L) {
                 existing?.delete()
                 dir.createFile("application/octet-stream", fileName)
-                    ?: throw HttpException("Не создан файл в выбранной папке")
-            } else existing ?: throw HttpException("Файл не найден")
+                    ?: throw HttpException("Could not create file in the chosen folder")
+            } else existing ?: throw HttpException("File not found")
             val total = body.contentLength().takeIf { l -> l > 0 }?.let { l -> l + start } ?: -1L
             ctx.contentResolver.openFileDescriptor(file.uri, "wa")?.use { pfd ->
                 ParcelFileDescriptor.AutoCloseOutputStream(pfd).use { out ->
@@ -120,7 +120,7 @@ object HttpDownloader {
                     channel.position(start)
                     pump(body.byteStream(), { buf, n -> out.write(buf, 0, n) }, start, total, onProgress)
                 }
-            } ?: throw HttpException("Не открыт файл для записи")
+            } ?: throw HttpException("Could not open file for writing")
             return total
         }
     }

@@ -1,0 +1,237 @@
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:2: Warning: A newer version of com.android.application than 8.5.2 is available: 9.4.0 [AndroidGradlePluginVersion]
+agp = "8.5.2"
+      ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:2: Warning: A newer version of com.android.application than 8.5.2 is available: 9.4.0 [AndroidGradlePluginVersion]
+agp = "8.5.2"
+      ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:2: Warning: A newer version of com.android.application than 8.5.2 is available: 9.4.0 [AndroidGradlePluginVersion]
+agp = "8.5.2"
+      ~~~~~~~
+
+   Explanation for issues of type "AndroidGradlePluginVersion":
+   This detector looks for usage of the Android Gradle Plugin where the
+   version you are using is not the current stable release. Using older
+   versions is fine, and there are cases where you deliberately want to stick
+   with an older version. However, you may simply not be aware that a more
+   recent version is available, and that is what this lint check helps find.
+
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:5: Warning: A newer version of androidx.compose:compose-bom than 2024.09.00 is available: 2026.09.00 [GradleDependency]
+composeBom = "2024.09.00"
+             ~~~~~~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:5: Warning: A newer version of androidx.compose:compose-bom than 2024.09.00 is available: 2026.09.00 [GradleDependency]
+composeBom = "2024.09.00"
+             ~~~~~~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:5: Warning: A newer version of androidx.compose:compose-bom than 2024.09.00 is available: 2026.09.00 [GradleDependency]
+composeBom = "2024.09.00"
+             ~~~~~~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:6: Warning: A newer version of androidx.core:core-ktx than 1.13.1 is available: 1.19.0 [GradleDependency]
+coreKtx = "1.13.1"
+          ~~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:6: Warning: A newer version of androidx.core:core-ktx than 1.13.1 is available: 1.19.0 [GradleDependency]
+coreKtx = "1.13.1"
+          ~~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:6: Warning: A newer version of androidx.core:core-ktx than 1.13.1 is available: 1.19.0 [GradleDependency]
+coreKtx = "1.13.1"
+          ~~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:7: Warning: A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.8.6 is available: 2.11.0 [GradleDependency]
+lifecycle = "2.8.6"
+            ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:7: Warning: A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.8.6 is available: 2.11.0 [GradleDependency]
+lifecycle = "2.8.6"
+            ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:7: Warning: A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.8.6 is available: 2.11.0 [GradleDependency]
+lifecycle = "2.8.6"
+            ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:7: Warning: A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.8.6 is available: 2.11.0 [GradleDependency]
+lifecycle = "2.8.6"
+            ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:7: Warning: A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.8.6 is available: 2.11.0 [GradleDependency]
+lifecycle = "2.8.6"
+            ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:7: Warning: A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.8.6 is available: 2.11.0 [GradleDependency]
+lifecycle = "2.8.6"
+            ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:8: Warning: A newer version of androidx.activity:activity-compose than 1.9.2 is available: 1.13.0 [GradleDependency]
+activityCompose = "1.9.2"
+                  ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:8: Warning: A newer version of androidx.activity:activity-compose than 1.9.2 is available: 1.13.0 [GradleDependency]
+activityCompose = "1.9.2"
+                  ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:8: Warning: A newer version of androidx.activity:activity-compose than 1.9.2 is available: 1.13.0 [GradleDependency]
+activityCompose = "1.9.2"
+                  ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:9: Warning: A newer version of androidx.navigation:navigation-compose than 2.7.0 is available: 2.10.1 [GradleDependency]
+navigationCompose = "2.7.0"
+                    ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:9: Warning: A newer version of androidx.navigation:navigation-compose than 2.7.0 is available: 2.10.1 [GradleDependency]
+navigationCompose = "2.7.0"
+                    ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:9: Warning: A newer version of androidx.navigation:navigation-compose than 2.7.0 is available: 2.10.1 [GradleDependency]
+navigationCompose = "2.7.0"
+                    ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:10: Warning: A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.5 [GradleDependency]
+room = "2.6.1"
+       ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:10: Warning: A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.5 [GradleDependency]
+room = "2.6.1"
+       ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:10: Warning: A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.5 [GradleDependency]
+room = "2.6.1"
+       ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:10: Warning: A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.5 [GradleDependency]
+room = "2.6.1"
+       ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:10: Warning: A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.5 [GradleDependency]
+room = "2.6.1"
+       ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:10: Warning: A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.5 [GradleDependency]
+room = "2.6.1"
+       ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:10: Warning: A newer version of androidx.room:room-paging than 2.6.1 is available: 2.8.5 [GradleDependency]
+room = "2.6.1"
+       ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:10: Warning: A newer version of androidx.room:room-paging than 2.6.1 is available: 2.8.5 [GradleDependency]
+room = "2.6.1"
+       ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:10: Warning: A newer version of androidx.room:room-paging than 2.6.1 is available: 2.8.5 [GradleDependency]
+room = "2.6.1"
+       ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:10: Warning: A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.5 [GradleDependency]
+room = "2.6.1"
+       ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:10: Warning: A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.5 [GradleDependency]
+room = "2.6.1"
+       ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:10: Warning: A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.5 [GradleDependency]
+room = "2.6.1"
+       ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:13: Warning: A newer version of io.coil-kt:coil-compose than 2.6.0 is available: 2.7.0 [GradleDependency]
+coil = "2.6.0"
+       ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:13: Warning: A newer version of io.coil-kt:coil-compose than 2.6.0 is available: 2.7.0 [GradleDependency]
+coil = "2.6.0"
+       ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:13: Warning: A newer version of io.coil-kt:coil-compose than 2.6.0 is available: 2.7.0 [GradleDependency]
+coil = "2.6.0"
+       ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:14: Warning: A newer version of androidx.datastore:datastore-preferences than 1.1.1 is available: 1.2.1 [GradleDependency]
+datastore = "1.1.1"
+            ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:14: Warning: A newer version of androidx.datastore:datastore-preferences than 1.1.1 is available: 1.2.1 [GradleDependency]
+datastore = "1.1.1"
+            ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:14: Warning: A newer version of androidx.datastore:datastore-preferences than 1.1.1 is available: 1.2.1 [GradleDependency]
+datastore = "1.1.1"
+            ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:15: Warning: A newer version of androidx.work:work-runtime-ktx than 2.9.0 is available: 2.11.2 [GradleDependency]
+work = "2.9.0"
+       ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:15: Warning: A newer version of androidx.work:work-runtime-ktx than 2.9.0 is available: 2.11.2 [GradleDependency]
+work = "2.9.0"
+       ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:15: Warning: A newer version of androidx.work:work-runtime-ktx than 2.9.0 is available: 2.11.2 [GradleDependency]
+work = "2.9.0"
+       ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:16: Warning: A newer version of androidx.paging:paging-runtime than 3.3.5 is available: 3.5.1 [GradleDependency]
+paging = "3.3.5"
+         ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:16: Warning: A newer version of androidx.paging:paging-runtime than 3.3.5 is available: 3.5.1 [GradleDependency]
+paging = "3.3.5"
+         ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:16: Warning: A newer version of androidx.paging:paging-runtime than 3.3.5 is available: 3.5.1 [GradleDependency]
+paging = "3.3.5"
+         ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:21: Warning: A newer version of androidx.documentfile:documentfile than 1.0.1 is available: 1.1.0 [GradleDependency]
+documentfile = "1.0.1"
+               ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:21: Warning: A newer version of androidx.documentfile:documentfile than 1.0.1 is available: 1.1.0 [GradleDependency]
+documentfile = "1.0.1"
+               ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:21: Warning: A newer version of androidx.documentfile:documentfile than 1.0.1 is available: 1.1.0 [GradleDependency]
+documentfile = "1.0.1"
+               ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:49: Warning: A newer version of androidx.paging:paging-compose than 3.3.5 is available: 3.5.1 [GradleDependency]
+paging-compose = { group = "androidx.paging", name = "paging-compose", version = "3.3.5" }
+                                                                                 ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:49: Warning: A newer version of androidx.paging:paging-compose than 3.3.5 is available: 3.5.1 [GradleDependency]
+paging-compose = { group = "androidx.paging", name = "paging-compose", version = "3.3.5" }
+                                                                                 ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:49: Warning: A newer version of androidx.paging:paging-compose than 3.3.5 is available: 3.5.1 [GradleDependency]
+paging-compose = { group = "androidx.paging", name = "paging-compose", version = "3.3.5" }
+                                                                                 ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:51: Warning: A newer version of androidx.browser:browser than 1.8.0 is available: 1.10.0 [GradleDependency]
+browser = { group = "androidx.browser", name = "browser", version = "1.8.0" }
+                                                                    ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:51: Warning: A newer version of androidx.browser:browser than 1.8.0 is available: 1.10.0 [GradleDependency]
+browser = { group = "androidx.browser", name = "browser", version = "1.8.0" }
+                                                                    ~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\gradle\libs.versions.toml:51: Warning: A newer version of androidx.browser:browser than 1.8.0 is available: 1.10.0 [GradleDependency]
+browser = { group = "androidx.browser", name = "browser", version = "1.8.0" }
+                                                                    ~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\res\mipmap-anydpi-v26: Warning: This folder configuration (v26) is unnecessary; minSdkVersion is 26. Merge all the resources in this folder into mipmap-anydpi. [ObsoleteSdkInt]
+
+   Explanation for issues of type "ObsoleteSdkInt":
+   This check flags version checks that are not necessary, because the
+   minSdkVersion (or surrounding known API level) is already at least as high
+   as the version checked for.
+
+   Similarly, it also looks for resources in -vNN folders, such as values-v14
+   where the version qualifier is less than or equal to the minSdkVersion,
+   where the contents should be merged into the best folder.
+
+D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\java\com\hydradroid\ui\screens\CatalogueScreen.kt:54: Information: Prefer mutableIntStateOf instead of mutableStateOf [AutoboxingStateCreation from androidx.compose.runtime]
+    var count by remember { mutableStateOf(0) }
+                            ~~~~~~~~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\java\com\hydradroid\ui\screens\CatalogueScreen.kt:58: Information: Prefer mutableIntStateOf instead of mutableStateOf [AutoboxingStateCreation from androidx.compose.runtime]
+    var skip by remember { mutableStateOf(0) }
+                           ~~~~~~~~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\java\com\hydradroid\ui\screens\HomeCatalogue.kt:41: Information: Prefer mutableIntStateOf instead of mutableStateOf [AutoboxingStateCreation from androidx.compose.runtime]
+    var refresh by remember { mutableStateOf(0) }
+                              ~~~~~~~~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\java\com\hydradroid\ui\screens\LibraryDownloads.kt:68: Information: Prefer mutableIntStateOf instead of mutableStateOf [AutoboxingStateCreation from androidx.compose.runtime]
+    var refresh by remember { mutableStateOf(0) }
+                              ~~~~~~~~~~~~~~
+D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\java\com\hydradroid\ui\screens\LibraryDownloads.kt:380: Information: Prefer mutableIntStateOf instead of mutableStateOf [AutoboxingStateCreation from androidx.compose.runtime]
+    var added by remember { mutableStateOf(0) }
+                            ~~~~~~~~~~~~~~
+
+   Explanation for issues of type "AutoboxingStateCreation":
+   Calling mutableStateOf<T>() when T is either backed by a primitive type on
+   the JVM or is a value class results in a state implementation that requires
+   all state values to be boxed. This usually causes an additional allocation
+   for each state write, and adds some additional work to auto-unbox values
+   when reading the value of the state. Instead, prefer to use a specialized
+   primitive state implementation for Int, Long, Float, and Double when the
+   state does not need to track null values and does not override the default
+   SnapshotMutationPolicy. See mutableIntStateOf(), mutableLongStateOf(),
+   mutableFloatStateOf(), and mutableDoubleStateOf() for more information.
+
+   Vendor: Jetpack Compose
+   Identifier: androidx.compose.runtime
+   Feedback: https://issuetracker.google.com/issues/new?component=612128
+
+D:\ZHDUDO2028\hydradroid\HydraDroid\app\src\main\res\mipmap-anydpi-v26\ic_launcher.xml:2: Warning: The application adaptive icon is missing a monochrome tag [MonochromeLauncherIcon]
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+^
+
+   Explanation for issues of type "MonochromeLauncherIcon":
+   If android:roundIcon and android:icon are both in your manifest, you must
+   either remove the reference to android:roundIcon if it is not needed; or,
+   supply the monochrome icon in the drawable defined by the android:roundIcon
+   and android:icon attribute.
+
+   For example, if android:roundIcon and android:icon are both in the
+   manifest, a launcher might choose to use android:roundIcon over
+   android:icon to display the adaptive app icon. Therefore, your themed
+   application iconwill not show if your monochrome attribute is not also
+   specified in android:roundIcon.
+
+0 errors, 56 warnings

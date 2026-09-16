@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.5.2" type="partial_results">
+    <map id="UnsafeIntentLaunch">
+            <map id="unprotected">
+                <entry
+                    name="com.hydradroid.MainActivity"
+                    boolean="true"/>
+            </map>
+    </map>
+    <map id="NotificationPermission">
+        <entry
+            name="source"
+            boolean="true"/>
+    </map>
+    <map id="UnusedResources">
+        <entry
+            name="model"
+            string="drawable[ic_download(U),ic_launcher_foreground(U),hydra_logo(U)],mipmap[ic_launcher(U)],string[app_name(U)],style[Theme_HydraDroid(U)],xml[file_paths(U)];1^2,3^1;;;"/>
+    </map>
+
+</incidents>

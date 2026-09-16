@@ -1,0 +1,10 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Порт resources/icon.png: оригинальный арт гидры, adaptive-верстка —
+         тёмный фон на весь холст, арт 72dp по центру в безопасной зоне. -->
+    <item android:drawable="@android:color/black" />
+    <item
+        android:width="72dp"
+        android:height="72dp"
+        android:gravity="center"
+        android:drawable="@drawable/hydra_logo" />
+</layer-list>

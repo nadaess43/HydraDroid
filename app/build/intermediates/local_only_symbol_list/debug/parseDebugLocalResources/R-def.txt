@@ -1,0 +1,9 @@
+R_DEF: Internal format may change without notice
+local
+drawable hydra_logo
+drawable ic_download
+drawable ic_launcher_foreground
+mipmap ic_launcher
+string app_name
+style Theme.HydraDroid
+xml file_paths

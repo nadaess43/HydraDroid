@@ -1,0 +1,170 @@
+[
+  {
+    "id": "BVnamDnv",
+    "name": "0xEMPRESS",
+    "url": "https://hydralinks.cloud/sources/empress.json",
+    "fingerprint": "7df76f4ec4915ab9bd1a9eeed36237607e8a9ffa3951ff67e81714607e92b07b"
+  },
+  {
+    "id": "VjxXKG7j",
+    "name": "AnkerGames",
+    "url": "https://wkeynhk.online/ankergames.json",
+    "fingerprint": "a28c7c93eac72eda942bce5a2c8db04f17789093092a77518a744da747360b82"
+  },
+  {
+    "id": "wnlZwYQL",
+    "name": "Anti Denuvo Sanctuary",
+    "url": "https://git.denuvosanctuary.com/denuvosanctuary/hydra/raw/branch/main/source.json",
+    "fingerprint": "b5528f1e14050a4826b401b31d5fea9443fd481dfd20fa81435f478477a7cfa7"
+  },
+  {
+    "id": "Y9LXKQg5",
+    "name": "AtopGames",
+    "url": "https://hydralinks.cloud/sources/atop-games.json",
+    "fingerprint": "c090a7e9946fd4f1cf2d60185484b048c55e85d4c1d4bfaef09ce259cc0d128d"
+  },
+  {
+    "id": "D3g3aOjG",
+    "name": "bumyy software",
+    "url": "https://bumyy32.github.io/bumyysoftware.json",
+    "fingerprint": "752ab4d522dd3120a8030d363e98e07f1e9bf4c336714d5ca0636ef0979d05c6"
+  },
+  {
+    "id": "XMLz8nQm",
+    "name": "Denuvo Pub - Free DRM Games",
+    "url": "https://konthe1.github.io/DenuvoPubSource.json",
+    "fingerprint": "80bc461309c30806fb83dd0fff9dd49fad04adb1dcd35c723d2fd989a8d844a8"
+  },
+  {
+    "id": "mbjQRYn3",
+    "name": "DODI",
+    "url": "https://hydralinks.cloud/sources/dodi.json",
+    "fingerprint": "43f152aace97818d942e1f725eba35986e0ac2296dc5c5b50701b2a681f5c3aa"
+  },
+  {
+    "id": "Bwnld0n5",
+    "name": "Erotorrent.ru by sodalite",
+    "url": "https://raw.githubusercontent.com/s0d4lite52spb/sodalite-hydralinks/refs/heads/main/erotorrent.ru_list.json",
+    "fingerprint": ""
+  },
+  {
+    "id": "89nGD7g6",
+    "name": "FitGirl",
+    "url": "https://hydralinks.cloud/sources/fitgirl.json",
+    "fingerprint": "c4b0afb4b4ab31b51d5c3232840c93ee7d24fc749e189f5f90da97276970c5f8"
+  },
+  {
+    "id": "VnamV0on",
+    "name": "freetp by hydrasources.su",
+    "url": "https://hydrasources.su/freetp_games.json",
+    "fingerprint": "11ece8fed993e194bde7ccce6d1c64b1263ae55922c1c207853afba085a30321"
+  },
+  {
+    "id": "8QjOZPL2",
+    "name": "GOG",
+    "url": "https://hydralinks.cloud/sources/gog.json",
+    "fingerprint": "5ff6709805b15378f09b367b910a4b254f8508c312131e3ae18cdbcba608587f"
+  },
+  {
+    "id": "xqg1ylgV",
+    "name": "hydrasources",
+    "url": "https://hydrasources.su/hydra.json",
+    "fingerprint": "eaf7233c1b37288a36e91c83038083390a5c4ed22072b7caad537e86c78f3ad9"
+  },
+  {
+    "id": "47LyMBLe",
+    "name": "KaOsKrew",
+    "url": "https://hydralinks.cloud/sources/kaoskrew.json",
+    "fingerprint": "f3354a26c849df246f003691531fbb97506bfeb6e4b17d7fd8fd02cfd924b73e"
+  },
+  {
+    "id": "rgwy7Doj",
+    "name": "Kazumi",
+    "url": "https://davidkazumisource.com/fontekazumi.json",
+    "fingerprint": "dc34581921426bd6b12b88792ed07b8f1bb624a9186caed6ad0c6d0025921d89"
+  },
+  {
+    "id": "JZgdM9Lo",
+    "name": "nnmclub by hydrasources",
+    "url": "https://hydrasources.su/nnmclub.json",
+    "fingerprint": "37494bb979310bee01839663e0ee67e9cf6c941cbb7c9c26273730b788c275f7"
+  },
+  {
+    "id": "v6n5BBgm",
+    "name": "onlinefix",
+    "url": "https://hydralinks.cloud/sources/onlinefix.json",
+    "fingerprint": "8883a3fa18bdfe22a79773f1854b8d20a3fe38f1129b472606e4ee74a4941bda"
+  },
+  {
+    "id": "enJbGoyn",
+    "name": "PsxRoms",
+    "url": "https://hydralinks.cloud/sources/psx-roms.json",
+    "fingerprint": "c75d9e6b02a9e4896e9bea2ad9674b00de8582b3f7d901797831df7b6c118dbe"
+  },
+  {
+    "id": "wnlZwplL",
+    "name": "RexaGames",
+    "url": "https://hydralinks.cloud/sources/rexagames.json",
+    "fingerprint": "3fe8b752448820cd5c3d0dd20e506e1e3fd9478c1d1b583394e19ae43ef41ee8"
+  },
+  {
+    "id": "VjxX7Rbj",
+    "name": "RuTracker PS1-PS3",
+    "url": "https://wkeynhk.online/rt_ps.json",
+    "fingerprint": "b6b4312af4e97144746ae20602010d27f47dd3cdfd2ec3ef59c431d16fd6b960"
+  },
+  {
+    "id": "penJq2jl",
+    "name": "Rutracker | All Categories",
+    "url": "https://raw.githubusercontent.com/KekitU/rutracker-hydra-links/main/all_categories.json",
+    "fingerprint": "7e94e095913c0c57172eb3ac4a8c2f83f6fa4fb6b59a854a75d3daa4f9212e73"
+  },
+  {
+    "id": "OnDk9yAj",
+    "name": "RuTracker | Linux",
+    "url": "https://wkeynhk.online/rutrackerlinux.json",
+    "fingerprint": "5b7ce4454f4c71e59a910c3f6a34ad11692aeb9566c674a75c511d996ecafa28"
+  },
+  {
+    "id": "0Wg84gdM",
+    "name": "Shisuy's source",
+    "url": "https://raw.githubusercontent.com/Shisuiicaro/source/refs/heads/main/shisuyssource.json",
+    "fingerprint": "c5e292bb6afa3397c53df56bbdc579a694edf185e0aea35720ca17e77418788b"
+  },
+  {
+    "id": "5jmbwXQn",
+    "name": "SteamGG",
+    "url": "https://wkeynhk.online/steamgg.json",
+    "fingerprint": "f1a97c411bd1787a0f88bf23b7cc6f750abee203377f80857b4d4ca9c56a5c24"
+  },
+  {
+    "id": "2RLK2Zga",
+    "name": "SteamRip",
+    "url": "https://hydralinks.cloud/sources/steamrip.json",
+    "fingerprint": "6a0e4fc461be6c0bfea89064f9487a86b4597bd088a1072592fc880baa8566d6"
+  },
+  {
+    "id": "aqjvEKLP",
+    "name": "TinyRepacks",
+    "url": "https://hydralinks.cloud/sources/tinyrepacks.json",
+    "fingerprint": "09fcf9de8a03a313272f5c6810c7f40169a2967a61d35282c9cd7efef6e54a73"
+  },
+  {
+    "id": "aygoPrLG",
+    "name": "TRASH",
+    "url": "https://trash-xrl.github.io/Fonte%20teste.json",
+    "fingerprint": "e66c15443bacf8d2c6cc3db54908fe7b537b36cc21531c0cf4313cbdd01755ab"
+  },
+  {
+    "id": "Zn9AZ06n",
+    "name": "Wkeynhk",
+    "url": "https://wkeynhk.online/rutor.json",
+    "fingerprint": "2abc3a02bc35c05a69b7efe76df7727c6c7827829126e81160b494a0684184ac"
+  },
+  {
+    "id": "kWgeevgz",
+    "name": "Xatab",
+    "url": "https://hydralinks.cloud/sources/xatab.json",
+    "fingerprint": "1c4e053abd9eb1cbe10d8694b09c379ce902a9688a8e9b9c5230999bfce7acfc"
+  }
+]

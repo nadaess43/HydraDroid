@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.5.2" type="incidents">
+
+    <incident
+        id="ObsoleteSdkInt"
+        severity="warning"
+        message="This folder configuration (`v26`) is unnecessary; `minSdkVersion` is 26. Merge all the resources in this folder into `mipmap-anydpi`.">
+        <fix-data file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/mipmap-anydpi-v26" folderName="mipmap-anydpi" requiresApi="26"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/mipmap-anydpi-v26"/>
+    </incident>
+
+    <incident
+        id="MonochromeLauncherIcon"
+        severity="warning"
+        message="The application adaptive icon is missing a monochrome tag">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/mipmap-anydpi-v26/ic_launcher.xml"
+            line="2"
+            column="1"
+            startOffset="39"
+            endLine="5"
+            endColumn="17"
+            endOffset="260"/>
+    </incident>
+
+    <incident
+        id="AutoboxingStateCreation"
+        severity="informational"
+        message="Prefer `mutableIntStateOf` instead of `mutableStateOf`">
+        <fix-replace
+            description="Replace with mutableIntStateOf"
+            replacement="androidx.compose.runtime.mutableIntStateOf"
+            shortenNames="true"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/hydradroid/ui/screens/CatalogueScreen.kt"
+                startOffset="2247"
+                endOffset="2261"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/hydradroid/ui/screens/CatalogueScreen.kt"
+            line="54"
+            column="29"
+            startOffset="2247"
+            endLine="54"
+            endColumn="43"
+            endOffset="2261"/>
+    </incident>
+
+    <incident
+        id="AutoboxingStateCreation"
+        severity="informational"
+        message="Prefer `mutableIntStateOf` instead of `mutableStateOf`">
+        <fix-replace
+            description="Replace with mutableIntStateOf"
+            replacement="androidx.compose.runtime.mutableIntStateOf"
+            shortenNames="true"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/hydradroid/ui/screens/CatalogueScreen.kt"
+                startOffset="2485"
+                endOffset="2499"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/hydradroid/ui/screens/CatalogueScreen.kt"
+            line="58"
+            column="28"
+            startOffset="2485"
+            endLine="58"
+            endColumn="42"
+            endOffset="2499"/>
+    </incident>
+
+    <incident
+        id="AutoboxingStateCreation"
+        severity="informational"
+        message="Prefer `mutableIntStateOf` instead of `mutableStateOf`">
+        <fix-replace
+            description="Replace with mutableIntStateOf"
+            replacement="androidx.compose.runtime.mutableIntStateOf"
+            shortenNames="true"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/hydradroid/ui/screens/HomeCatalogue.kt"
+                startOffset="1521"
+                endOffset="1535"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/hydradroid/ui/screens/HomeCatalogue.kt"
+            line="41"
+            column="31"
+            startOffset="1521"
+            endLine="41"
+            endColumn="45"
+            endOffset="1535"/>
+    </incident>
+
+    <incident
+        id="AutoboxingStateCreation"
+        severity="informational"
+        message="Prefer `mutableIntStateOf` instead of `mutableStateOf`">
+        <fix-replace
+            description="Replace with mutableIntStateOf"
+            replacement="androidx.compose.runtime.mutableIntStateOf"
+            shortenNames="true"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/hydradroid/ui/screens/LibraryDownloads.kt"
+                startOffset="3187"
+                endOffset="3201"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/hydradroid/ui/screens/LibraryDownloads.kt"
+            line="68"
+            column="31"
+            startOffset="3187"
+            endLine="68"
+            endColumn="45"
+            endOffset="3201"/>
+    </incident>
+
+    <incident
+        id="AutoboxingStateCreation"
+        severity="informational"
+        message="Prefer `mutableIntStateOf` instead of `mutableStateOf`">
+        <fix-replace
+            description="Replace with mutableIntStateOf"
+            replacement="androidx.compose.runtime.mutableIntStateOf"
+            shortenNames="true"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/hydradroid/ui/screens/LibraryDownloads.kt"
+                startOffset="18350"
+                endOffset="18364"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/hydradroid/ui/screens/LibraryDownloads.kt"
+            line="380"
+            column="29"
+            startOffset="18350"
+            endLine="380"
+            endColumn="43"
+            endOffset="18364"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.core:core-ktx than 1.13.1 is available: 1.19.0">
+        <fix-replace
+            description="Change to 1.19.0"
+            family="Update versions"
+            oldString="1.13.1"
+            replacement="1.19.0"
+            priority="0"/>
+        <location
+            file="../gradle/libs.versions.toml"
+            line="6"
+            column="11"
+            startOffset="101"
+            endLine="6"
+            endColumn="19"
+            endOffset="109"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.8.6 is available: 2.11.0">
+        <fix-replace
+            description="Change to 2.11.0"
+            family="Update versions"
+            oldString="2.8.6"
+            replacement="2.11.0"
+            priority="0"/>
+        <location
+            file="../gradle/libs.versions.toml"
+            line="7"
+            column="13"
+            startOffset="122"
+            endLine="7"
+            endColumn="20"
+            endOffset="129"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.8.6 is available: 2.11.0">
+        <fix-replace
+            description="Change to 2.11.0"
+            family="Update versions"
+            oldString="2.8.6"
+            replacement="2.11.0"
+            priority="0"/>
+        <location
+            file="../gradle/libs.versions.toml"
+            line="7"
+            column="13"
+            startOffset="122"
+            endLine="7"
+            endColumn="20"
+            endOffset="129"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.activity:activity-compose than 1.9.2 is available: 1.13.0">
+        <fix-replace
+            description="Change to 1.13.0"
+            family="Update versions"
+            oldString="1.9.2"
+            replacement="1.13.0"
+            priority="0"/>
+        <location
+            file="../gradle/libs.versions.toml"
+            line="8"
+            column="19"
+            startOffset="148"
+            endLine="8"
+            endColumn="26"
+            endOffset="155"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.navigation:navigation-compose than 2.7.0 is available: 2.10.1">
+        <fix-replace
+            description="Change to 2.10.1"
+            family="Update versions"
+            oldString="2.7.0"
+            replacement="2.10.1"
+            priority="0"/>
+        <location
+            file="../gradle/libs.versions.toml"
+            line="9"
+            column="21"
+            startOffset="176"
+            endLine="9"
+            endColumn="28"
+            endOffset="183"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.compose:compose-bom than 2024.09.00 is available: 2026.09.00">
+        <fix-replace
+            description="Change to 2026.09.00"
+            family="Update versions"
+            oldString="2024.09.00"
+            replacement="2026.09.00"
+            priority="0"/>
+        <location
+            file="../gradle/libs.versions.toml"
+            line="5"
+            column="14"
+            startOffset="78"
+            endLine="5"
+            endColumn="26"
+            endOffset="90"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.5">
+        <fix-replace
+            description="Change to 2.8.5"
+            family="Update versions"
+            oldString="2.6.1"
+            replacement="2.8.5"
+            priority="0"/>
+        <location
+            file="../gradle/libs.versions.toml"
+            line="10"
+            column="8"
+            startOffset="191"
+            endLine="10"
+            endColumn="15"
+            endOffset="198"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.5">
+        <fix-replace
+            description="Change to 2.8.5"
+            family="Update versions"
+            oldString="2.6.1"
+            replacement="2.8.5"
+            priority="0"/>
+        <location
+            file="../gradle/libs.versions.toml"
+            line="10"
+            column="8"
+            startOffset="191"
+            endLine="10"
+            endColumn="15"
+            endOffset="198"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.room:room-paging than 2.6.1 is available: 2.8.5">
+        <fix-replace
+            description="Change to 2.8.5"
+            family="Update versions"
+            oldString="2.6.1"
+            replacement="2.8.5"
+            priority="0"/>
+        <location
+            file="../gradle/libs.versions.toml"
+            line="10"
+            column="8"
+            startOffset="191"
+            endLine="10"
+            endColumn="15"
+            endOffset="198"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.5">
+        <fix-replace
+            description="Change to 2.8.5"
+            family="Update versions"
+            oldString="2.6.1"
+            replacement="2.8.5"
+            priority="0"/>
+        <location
+            file="../gradle/libs.versions.toml"
+            line="10"
+            column="8"
+            startOffset="191"
+            endLine="10"
+            endColumn="15"
+            endOffset="198"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of io.coil-kt:coil-compose than 2.6.0 is available: 2.7.0">
+        <fix-replace
+            description="Change to 2.7.0"
+            family="Update versions"
+            oldString="2.6.0"
+            replacement="2.7.0"
+            priority="0"/>
+        <location
+            file="../gradle/libs.versions.toml"
+            line="13"
+            column="8"
+            startOffset="244"
+            endLine="13"
+            endColumn="15"
+            endOffset="251"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.datastore:datastore-preferences than 1.1.1 is available: 1.2.1">
+        <fix-replace
+            description="Change to 1.2.1"
+            family="Update versions"
+            oldString="1.1.1"
+            replacement="1.2.1"
+            priority="0"/>
+        <location
+            file="../gradle/libs.versions.toml"
+            line="14"
+            column="13"
+            startOffset="264"
+            endLine="14"
+            endColumn="20"
+            endOffset="271"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.work:work-runtime-ktx than 2.9.0 is available: 2.11.2">
+        <fix-replace
+            description="Change to 2.11.2"
+            family="Update versions"
+            oldString="2.9.0"
+            replacement="2.11.2"
+            priority="0"/>
+        <location
+            file="../gradle/libs.versions.toml"
+            line="15"
+            column="8"
+            startOffset="279"
+            endLine="15"
+            endColumn="15"
+            endOffset="286"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.paging:paging-runtime than 3.3.5 is available: 3.5.1">
+        <fix-replace
+            description="Change to 3.5.1"
+            family="Update versions"
+            oldString="3.3.5"
+            replacement="3.5.1"
+            priority="0"/>
+        <location
+            file="../gradle/libs.versions.toml"
+            line="16"
+            column="10"
+            startOffset="296"
+            endLine="16"
+            endColumn="17"
+            endOffset="303"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.paging:paging-compose than 3.3.5 is available: 3.5.1">
+        <fix-replace
+            description="Change to 3.5.1"
+            family="Update versions"
+            oldString="3.3.5"
+            replacement="3.5.1"
+            priority="0"/>
+        <location
+            file="../gradle/libs.versions.toml"
+            line="49"
+            column="82"
+            startOffset="2920"
+            endLine="49"
+            endColumn="89"
+            endOffset="2927"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.browser:browser than 1.8.0 is available: 1.10.0">
+        <fix-replace
+            description="Change to 1.10.0"
+            family="Update versions"
+            oldString="1.8.0"
+            replacement="1.10.0"
+            priority="0"/>
+        <location
+            file="../gradle/libs.versions.toml"
+            line="51"
+            column="69"
+            startOffset="3106"
+            endLine="51"
+            endColumn="76"
+            endOffset="3113"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.documentfile:documentfile than 1.0.1 is available: 1.1.0">
+        <fix-replace
+            description="Change to 1.1.0"
+            family="Update versions"
+            oldString="1.0.1"
+            replacement="1.1.0"
+            priority="0"/>
+        <location
+            file="../gradle/libs.versions.toml"
+            line="21"
+            column="16"
+            startOffset="413"
+            endLine="21"
+            endColumn="23"
+            endOffset="420"/>
+    </incident>
+
+    <incident
+        id="AndroidGradlePluginVersion"
+        severity="warning"
+        message="A newer version of com.android.application than 8.5.2 is available: 9.4.0">
+        <fix-replace
+            description="Change to 9.4.0"
+            family="Update versions"
+            oldString="8.5.2"
+            replacement="9.4.0"
+            priority="0"/>
+        <location
+            file="../gradle/libs.versions.toml"
+            line="2"
+            column="7"
+            startOffset="17"
+            endLine="2"
+            endColumn="14"
+            endOffset="24"/>
+    </incident>
+
+</incidents>

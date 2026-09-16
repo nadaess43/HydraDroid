@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HydraDroid</string>
+    <style name="Theme.HydraDroid" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#0d0d0d</item>
+        <item name="android:statusBarColor">#0d0d0d</item>
+        <item name="android:navigationBarColor">#121212</item>
+    </style>
+</resources>

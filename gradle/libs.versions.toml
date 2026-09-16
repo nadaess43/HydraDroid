@@ -1,0 +1,65 @@
+[versions]
+agp = "8.5.2"
+kotlin = "2.0.20"
+ksp = "2.0.20-1.0.25"
+composeBom = "2024.09.00"
+coreKtx = "1.13.1"
+lifecycle = "2.8.6"
+activityCompose = "1.9.2"
+navigationCompose = "2.7.0"
+room = "2.6.1"
+retrofit = "2.11.0"
+okhttp = "4.12.0"
+coil = "2.6.0"
+datastore = "1.1.1"
+work = "2.9.0"
+paging = "3.3.5"
+securityCrypto = "1.1.0"
+jlibtorrent = "2.0.12.9"
+commonsCompress = "1.28.0"
+junrar = "8.1.1"
+documentfile = "1.0.1"
+
+[libraries]
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+compose-ui = { group = "androidx.compose.ui", name = "ui" }
+compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+compose-material-icons = { group = "androidx.compose.material", name = "material-icons-core" }
+compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-moshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "retrofit" }
+moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version = "1.15.1" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+work-runtime = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
+paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging" }
+paging-compose = { group = "androidx.paging", name = "paging-compose", version = "3.3.5" }
+security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
+browser = { group = "androidx.browser", name = "browser", version = "1.8.0" }
+jlibtorrent = { group = "com.frostwire", name = "jlibtorrent", version.ref = "jlibtorrent" }
+jlibtorrent-android-arm = { group = "com.frostwire", name = "jlibtorrent-android-arm", version.ref = "jlibtorrent" }
+jlibtorrent-android-arm64 = { group = "com.frostwire", name = "jlibtorrent-android-arm64", version.ref = "jlibtorrent" }
+jlibtorrent-android-x86 = { group = "com.frostwire", name = "jlibtorrent-android-x86", version.ref = "jlibtorrent" }
+jlibtorrent-android-x8664 = { group = "com.frostwire", name = "jlibtorrent-android-x86_64", version.ref = "jlibtorrent" }
+commons-compress = { group = "org.apache.commons", name = "commons-compress", version.ref = "commonsCompress" }
+junrar = { group = "com.github.junrar", name = "junrar", version.ref = "junrar" }
+documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
